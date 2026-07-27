@@ -1,72 +1,111 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header';
-import CardCarousel from '../components/CardCarousel';
+import Header from '../components/Header.tsx';
+import Footer from '../components/Footer.tsx';
+import SideRays from '../components/SideRays.tsx';
+import Watermark from '../components/Watermark.astro';
+import GalleryShowcase from '../components/GalleryShowcase.tsx';
+import '../styles/gallery.css';
 ---
 
-<BaseLayout title="Gallery | Developer Students Club">
-  <style>
-    @keyframes dsc-marquee {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .dsc-marquee-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      height: 40px;
-      overflow: hidden;
-      background: #111827;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-      z-index: 150;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .dsc-marquee-content {
-      display: flex;
-      animation: dsc-marquee 30s linear infinite;
-    }
-    .dsc-marquee-item {
-      display: flex;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-    .dsc-marquee-star {
-      color: #14a3a3;
-      margin: 0 32px;
-      font-size: 14px;
-    }
-  </style>
+<BaseLayout
+  title="Gallery | Developer Students Club — SRM Ramapuram"
+  description="Relive the moments that defined us — hackathons, workshops, design sprints, and community events captured through our lens."
+>
 
+  <!-- ── WebGL SideRays Background ── -->
+  <div class="side-rays-bg">
+    <SideRays
+      client:idle
+      speed={1.0}
+      rayColor1="#1dd1a1"
+      rayColor2="#00c9ff"
+      intensity={1.1}
+      spread={2.2}
+      origin="top-left"
+      tilt={0}
+      saturation={1.4}
+      blend={0.7}
+      falloff={1.8}
+      opacity={0.55}
+    />
+  </div>
+
+  <!-- ── Decorative Corner Circuit Graphics ── -->
+  <svg class="corner-graphic corner-top-left" width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,50 L100,50 L150,100 L220,100" stroke="rgba(232, 237, 233, 0.4)" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M60,0 L60,80 L100,120 L150,120" stroke="rgba(232, 237, 233, 0.25)" stroke-width="1" stroke-linecap="round" />
+    <circle cx="220" cy="100" r="3" fill="#1dd1a1" />
+    <circle cx="150" cy="120" r="2" fill="rgba(232, 237, 233, 0.6)" />
+  </svg>
+
+  <svg class="corner-graphic corner-top-right" width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M250,50 L150,50 L100,100 L30,100" stroke="rgba(232, 237, 233, 0.4)" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M190,0 L190,80 L150,120 L100,120" stroke="rgba(232, 237, 233, 0.25)" stroke-width="1" stroke-linecap="round" />
+    <circle cx="30" cy="100" r="3" fill="#1dd1a1" />
+    <circle cx="100" cy="120" r="2" fill="rgba(232, 237, 233, 0.6)" />
+  </svg>
+
+  <!-- ── Marquee Ticker ── -->
   <div class="dsc-marquee-container">
     <div class="dsc-marquee-content">
-      <div style="display: flex; align-items: center;">
-        <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
-      </div>
+      <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
+
+      <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
     </div>
   </div>
 
+  <!-- ── Navigation ── -->
   <Header client:load active="gallery" />
 
-  <!-- ========== REACT CAROUSEL SECTION ========== -->
-  <section id="react-carousel-root" style="width: 100vw; height: 100vh; overflow: hidden;">
-    <CardCarousel client:load />
-  </section>
+  <!-- ── Main Content ── -->
+  <main class="contact-container">
+    <div class="contact-layout-wrapper">
+
+      <!-- Background Watermark -->
+      <Watermark text="Gallery" />
+
+      <!-- Page Hero Heading -->
+      <div class="gallery-page-hero">
+        <h1 class="gallery-page-title">Our Moments</h1>
+        <p class="gallery-page-subtitle">
+          A visual journey through hackathons, workshops, and community events
+          that shaped our chapter.
+        </p>
+      </div>
+
+      <!-- Gallery Showcase: filters, masonry, stats, video reel, lightbox -->
+      <GalleryShowcase client:visible />
+
+      <!-- CTA Section -->
+      <div class="gallery-cta-section">
+        <div class="gallery-cta-card">
+          <span class="gallery-cta-eyebrow">Want to be in the next frame?</span>
+          <h2 class="gallery-cta-title">Join DSC SRM Ramapuram</h2>
+          <p class="gallery-cta-body">
+            Every event is a chance to learn, build, and connect. Be part of our
+            next chapter.
+          </p>
+          <a href="/contact" class="gallery-cta-btn" id="gallery-cta-join-btn">
+            Get Involved
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <Footer client:visible={{ rootMargin: '100px' }} active="gallery" />
 
 </BaseLayout>
