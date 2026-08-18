@@ -1,111 +1,260 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header';
+import Header from '../components/Header.tsx';
+import Footer from '../components/Footer.tsx';
+import SideRays from '../components/SideRays.tsx';
+import Watermark from '../components/Watermark.astro';
+import AboutStats from '../components/AboutStats.tsx';
+import '../styles/contact.css';
 import '../styles/about.css';
 ---
 
-<BaseLayout title="About | Shaping The Future">
-  <!-- Marquee -->
+<BaseLayout
+  title="About — Developer Students Club | SRM IST Ramapuram"
+  description="Learn about the Developer Students Club at SRM IST Ramapuram — our story, mission, values, and the passionate student community behind it all."
+>
+
+  <!-- ── WebGL SideRays Background (origin left for variety) ── -->
+  <div class="side-rays-bg">
+    <SideRays
+      client:idle
+      speed={1.0}
+      rayColor1="#1dd1a1"
+      rayColor2="#00c9ff"
+      intensity={1.0}
+      spread={2.2}
+      origin="top-left"
+      tilt={0}
+      saturation={1.4}
+      blend={0.7}
+      falloff={1.8}
+      opacity={0.5}
+    />
+  </div>
+
+  <!-- ── Decorative Corner Circuit Board Graphics ── -->
+  <svg class="corner-graphic corner-top-left" width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,50 L100,50 L150,100 L220,100" stroke="rgba(232, 237, 233, 0.4)" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M60,0 L60,80 L100,120 L150,120" stroke="rgba(232, 237, 233, 0.25)" stroke-width="1" stroke-linecap="round" />
+    <circle cx="220" cy="100" r="3" fill="#1dd1a1" />
+    <circle cx="150" cy="120" r="2" fill="rgba(232, 237, 233, 0.6)" />
+  </svg>
+
+  <svg class="corner-graphic corner-top-right" width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M250,50 L150,50 L100,100 L30,100" stroke="rgba(232, 237, 233, 0.4)" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M190,0 L190,80 L150,120 L100,120" stroke="rgba(232, 237, 233, 0.25)" stroke-width="1" stroke-linecap="round" />
+    <circle cx="30" cy="100" r="3" fill="#1dd1a1" />
+    <circle cx="100" cy="120" r="2" fill="rgba(232, 237, 233, 0.6)" />
+  </svg>
+
+  <!-- ── Marquee Ticker ── -->
   <div class="dsc-marquee-container">
     <div class="dsc-marquee-content">
-      <div style="display: flex; align-items: center">
-        <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
-      </div>
-      <div style="display: flex; align-items: center">
-        <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
-      </div>
-      <div style="display: flex; align-items: center">
-        <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
-        <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
-      </div>
+      <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
+
+      <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
     </div>
   </div>
 
-  <!-- Navigation -->
+  <!-- ── Navigation (React Island) ── -->
   <Header client:load active="about" />
 
-  <!-- Hero Section -->
-  <header class="about-hero">
-    <div class="hero-image-container">
-      <div class="checkered-overlay"></div>
-      <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Action Shot" class="hero-bg">
-    </div>
-    <h1 class="massive-text">SHAPING THE FUTURE OF FAN EXPERIENCE</h1>
-  </header>
+  <!-- Main content wrapper following the contact-container convention -->
+  <main class="contact-container" style="max-width: 1100px;">
+    <div class="contact-layout-wrapper" style="--watermark-size: clamp(6rem, 20vw, 15rem);">
 
-  <!-- Intro Block -->
-  <section class="intro-block">
-    <div class="intro-col text-left">
-      <p>WE ARE A GLOBAL AGENCY DRIVEN BY PASSION AND INNOVATION, CREATING EXPERIENCES THAT CONNECT FANS TO THE SPORTS THEY LOVE IN UNPRECEDENTED WAYS.</p>
-    </div>
-    <div class="intro-col center-image">
-      <img src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Person holding ball">
-    </div>
-    <div class="intro-col text-right">
-      <p>OUR TEAM BRINGS TOGETHER EXPERTISE IN STRATEGY, DESIGN, AND TECHNOLOGY TO DELIVER CUTTING-EDGE SOLUTIONS FOR BRANDS WORLDWIDE.</p>
-    </div>
-  </section>
+      <!-- 3D Parallax Watermark -->
+      <Watermark text="About" />
 
-  <!-- Latest Work -->
-  <section class="latest-work">
-    <h2 class="massive-text">LATEST WORK</h2>
-    <div class="work-grid">
-      <div class="work-item full-width"><img src="https://images.unsplash.com/photo-1535139262971-c51845709a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Golf Crowd"></div>
-      <div class="work-item half-width"><img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Soccer Crowd"></div>
-      <div class="work-item half-width"><img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Soccer Player"></div>
-      <div class="work-item full-width"><img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Field"></div>
-    </div>
-  </section>
+      <!-- ── Hero Heading ── -->
+      <section class="about-hero-section">
+        <div class="about-hero-inner">
+          <p class="about-hero-eyebrow">Developer Students Club · SRM IST Ramapuram</p>
+          <h1 class="about-hero-headline">
+            Our Story,<br />Our <em>Community</em>
+          </h1>
+          <p class="about-hero-subtext">
+            We are a Google-backed university community of passionate student developers, designers, and innovators. Since our founding, we've been the heartbeat of tech culture at SRM IST Ramapuram.
+          </p>
+        </div>
+      </section>
 
-  <!-- We Keep Good -->
-  <section class="partners">
-    <h2 class="massive-text">WE KEEP GOOD</h2>
-    <div class="logos-container">
-      <div class="logo">LIV GOLF</div>
-      <div class="logo">Spotify</div>
-      <div class="logo">WSL</div>
-    </div>
-  </section>
+      <!-- ── Mission & Vision ── -->
+      <section class="about-mission-section">
+        <div class="about-mission-inner">
+          <div class="about-mission-grid">
 
-  <!-- Insights & Opinions -->
-  <section class="insights">
-    <h2 class="massive-text">INSIGHTS & OPINIONS</h2>
-    <div class="insights-grid">
-      <div class="insight-card">
-        <h3 class="insight-date">27.05</h3>
-        <p class="insight-title">The evolution of digital fan engagement in modern sports stadiums.</p>
-        <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Stadium">
-      </div>
-      <div class="insight-card">
-        <h3 class="insight-date">21.05</h3>
-        <p class="insight-title">How augmented reality is transforming the broadcast experience.</p>
-        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="AR">
-      </div>
-      <div class="insight-card">
-        <h3 class="insight-date">19.05</h3>
-        <p class="insight-title">Creating personalized journeys for the next generation of fans.</p>
-        <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Fans">
-      </div>
-    </div>
-    <div class="btn-container">
-      <a href="#" class="primary-btn">Read all news</a>
-    </div>
-  </section>
+            <!-- Left: narrative -->
+            <div class="about-mission-text-col">
+              <div>
+                <span class="about-section-label">Our Mission</span>
+                <h2 class="about-mission-heading">To foster developer innovation through community-driven learning.</h2>
+              </div>
+              <p class="about-mission-body">
+                Developer Students Club provides a collaborative space where students across all disciplines can learn modern technology, build real projects, and grow alongside peers who share their passion for innovation.
+              </p>
+              <p class="about-mission-body">
+                We believe that the best learning happens at the intersection of curiosity and challenge — in a room full of people who are just as excited about building things as you are.
+              </p>
+            </div>
 
-  <!-- Bottom Mask -->
-  <section class="bottom-mask">
-    <div class="mask-text-container">
-      <h1 class="mask-text">WOW</h1>
-    </div>
-  </section>
+            <!-- Right: Info card -->
+            <div class="about-mission-card">
+              <div class="about-google-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                </svg>
+                Backed by Google Developers
+              </div>
+              <h3 class="about-mission-card-title">Empowering the next generation of developers</h3>
+              <p class="about-mission-card-body">
+                As a Google Developer Student Club, we are part of a global network of university-based community groups for students interested in technology. We connect our members with resources, mentors, and opportunities that go far beyond the campus.
+              </p>
+              <div class="about-founded-row">
+                <div class="about-founded-year">2022</div>
+                <div class="about-founded-label">Year Founded<br />SRM IST Ramapuram Chapter</div>
+              </div>
+            </div>
 
-  <script src="../scripts/about.js"></script>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Stats (React Island: animated counters) ── -->
+      <section class="about-stats-section">
+        <div class="about-stats-inner">
+          <AboutStats client:visible />
+        </div>
+      </section>
+
+      <!-- ── Values / Pillars ── -->
+      <section class="about-values-section">
+        <div class="about-values-inner">
+          <div class="about-values-header">
+            <span class="about-section-label">What We Stand For</span>
+            <h2 class="about-values-title">Three pillars that<br />define our community</h2>
+          </div>
+
+          <div class="about-values-grid">
+
+            <div class="about-value-card" id="about-value-learn">
+              <div class="about-value-icon">📚</div>
+              <div class="about-value-name">Learn</div>
+              <p class="about-value-desc">
+                We organise workshops, study groups, and technical talks that make cutting-edge knowledge accessible. No background is required — only curiosity.
+              </p>
+            </div>
+
+            <div class="about-value-card" id="about-value-build">
+              <div class="about-value-icon">🛠️</div>
+              <div class="about-value-name">Build</div>
+              <p class="about-value-desc">
+                From 24-hour hackathons to semester-long open-source projects, we give members the platform and teammates to turn ideas into reality.
+              </p>
+            </div>
+
+            <div class="about-value-card" id="about-value-connect">
+              <div class="about-value-icon">🌐</div>
+              <div class="about-value-name">Connect</div>
+              <p class="about-value-desc">
+                Being part of a global Google developer network means our members get access to industry mentors, tech events, and a community that lasts beyond graduation.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Timeline ── -->
+      <section class="about-timeline-section">
+        <div class="about-timeline-inner">
+          <div class="about-timeline-header">
+            <span class="about-section-label">Our Journey</span>
+            <h2 class="about-timeline-title">Key milestones</h2>
+          </div>
+
+          <div class="about-timeline-list">
+
+            <div class="about-timeline-item" id="about-milestone-2022">
+              <div class="about-timeline-year">2022</div>
+              <div class="about-timeline-content">
+                <div class="about-timeline-event-title">Chapter Founded</div>
+                <p class="about-timeline-event-desc">The DSC SRM IST Ramapuram chapter was officially established under the Google Developer Student Clubs programme, starting with 40 founding members.</p>
+              </div>
+            </div>
+
+            <div class="about-timeline-item" id="about-milestone-2023a">
+              <div class="about-timeline-year">2023</div>
+              <div class="about-timeline-content">
+                <div class="about-timeline-event-title">First Hackathon: HackRamp I</div>
+                <p class="about-timeline-event-desc">Hosted our inaugural 24-hour hackathon with 120 participants, 20 teams, and 6 project submissions shortlisted for Google's community impact awards.</p>
+              </div>
+            </div>
+
+            <div class="about-timeline-item" id="about-milestone-2023b">
+              <div class="about-timeline-year">2023</div>
+              <div class="about-timeline-content">
+                <div class="about-timeline-event-title">Three-Domain Structure Launched</div>
+                <p class="about-timeline-event-desc">Restructured the club into three specialised domains — Technical, Creatives, and Operations — to give every student a clear path to contribute.</p>
+              </div>
+            </div>
+
+            <div class="about-timeline-item" id="about-milestone-2024">
+              <div class="about-timeline-year">2024</div>
+              <div class="about-timeline-content">
+                <div class="about-timeline-event-title">200+ Members Milestone & GDSC Solution Challenge</div>
+                <p class="about-timeline-event-desc">Crossed 200 active members and submitted two projects to the GDSC Solution Challenge, advancing to the national round for the first time.</p>
+              </div>
+            </div>
+
+            <div class="about-timeline-item" id="about-milestone-2025">
+              <div class="about-timeline-year">2025</div>
+              <div class="about-timeline-content">
+                <div class="about-timeline-event-title">Open Source Initiative & 300+ Members</div>
+                <p class="about-timeline-event-desc">Launched our open-source initiative with 15+ active repositories, reached 300+ members, and delivered 40+ events across the academic year.</p>
+              </div>
+            </div>
+
+            <div class="about-timeline-item" id="about-milestone-2026">
+              <div class="about-timeline-year">2026</div>
+              <div class="about-timeline-content">
+                <div class="about-timeline-event-title">CodeFest 2026 & Website Rebrand</div>
+                <p class="about-timeline-event-desc">Gearing up for our flagship CodeFest 2026 hackathon and launching this redesigned website — a fully open-source project built by club members.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Bottom CTA ── -->
+      <section class="about-bottom-cta">
+        <div class="about-cta-box">
+          <div class="about-cta-text">
+            <h2>Become part of the story.</h2>
+            <p>We're always looking for curious, driven students who want to make an impact. Whether you're a developer, designer, or organiser — there's a place for you here.</p>
+          </div>
+          <div>
+            <a href="/contact" class="about-cta-btn" id="about-join-btn">
+              <span>Get in Touch</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── Footer (React Island) ── -->
+  <Footer client:visible={{ rootMargin: '100px' }} active="about" />
+
 </BaseLayout>
