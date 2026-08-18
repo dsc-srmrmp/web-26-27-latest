@@ -13,7 +13,7 @@ interface GalleryItem {
 const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: 1,
-    src: '/gallery/hackathon.png',
+    src: '/gallery/hackathon.webp',
     title: 'TechHack 2025',
     category: 'Hackathons',
     description: '36-hour hackathon with 200+ participants',
@@ -21,21 +21,21 @@ const GALLERY_ITEMS: GalleryItem[] = [
   },
   {
     id: 2,
-    src: '/gallery/workshop.png',
+    src: '/gallery/workshop.webp',
     title: 'AI/ML Workshop',
     category: 'Workshops',
     description: 'Hands-on deep learning with TensorFlow',
   },
   {
     id: 3,
-    src: '/gallery/design.png',
+    src: '/gallery/design.webp',
     title: 'Design Sprint',
     category: 'Design',
     description: 'Weekend UI/UX design thinking session',
   },
   {
     id: 4,
-    src: '/gallery/community.png',
+    src: '/gallery/community.webp',
     title: 'Community Meetup',
     category: 'Community',
     description: 'Monthly chapter meetup & networking',
@@ -43,14 +43,14 @@ const GALLERY_ITEMS: GalleryItem[] = [
   },
   {
     id: 5,
-    src: '/gallery/awards.png',
+    src: '/gallery/awards.webp',
     title: 'Awards Ceremony',
     category: 'Community',
     description: 'Celebrating excellence and innovation',
   },
   {
     id: 6,
-    src: '/gallery/networking.png',
+    src: '/gallery/networking.webp',
     title: 'Dev Networking Night',
     category: 'Community',
     description: 'Connect with developers across chapters',
