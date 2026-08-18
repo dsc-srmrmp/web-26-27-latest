@@ -1,103 +1,316 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero';
+import Header from '../components/Header.tsx';
+import Footer from '../components/Footer.tsx';
+import SideRays from '../components/SideRays.tsx';
+import Watermark from '../components/Watermark.astro';
+import '../styles/contact.css';
+import '../styles/home.css';
 ---
 
-<BaseLayout>
-  <!-- Hero Component (React Island) -->
+<BaseLayout
+  title="Developer Students Club | SRM IST Ramapuram"
+  description="Developer Students Club (DSC) at SRM IST Ramapuram — Building the Developers of Tomorrow. Join workshops, hackathons, and open-source projects."
+>
+
+  <!-- ── WebGL SideRays Background ── -->
+  <div class="side-rays-bg">
+    <SideRays
+      client:idle
+      speed={1.0}
+      rayColor1="#1dd1a1"
+      rayColor2="#00f2fe"
+      intensity={1.0}
+      spread={2.2}
+      origin="top-right"
+      tilt={0}
+      saturation={1.4}
+      blend={0.7}
+      falloff={1.8}
+      opacity={0.55}
+    />
+  </div>
+
+  <!-- ── Marquee Ticker ── -->
+  <div class="dsc-marquee-container">
+    <div class="dsc-marquee-content">
+      <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
+
+      <div class="dsc-marquee-item">UPCOMING HACKATHON: CODEFEST 2026</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">NEW WORKSHOPS EVERY WEEK</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">JOIN THE OPEN SOURCE REVOLUTION</div><div class="dsc-marquee-star">★</div>
+      <div class="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS</div><div class="dsc-marquee-star">★</div>
+    </div>
+  </div>
+
+  <!-- ── Navigation (React Island) ── -->
+  <Header client:load active="home" />
+
+  <!-- ── Hero (React Island — spotlight reveal canvas) ── -->
   <Hero client:load />
 
-  <!-- ========== CREATIVE AI SECTION ========== -->
-  <section class="creative-ai-section">
-    <div class="ca-grid">
-      <!-- Row 1 -->
-      <div class="ca-cell ca-white-block ca-span-2">
-        <h2 class="ca-heading">Fostering developer<br>innovation</h2>
-        <p class="ca-text">Developer Students Club, SRM IST Ramapuram provides<br>a collaborative space for students to learn, build, and grow<br>together, bridging the gap between theory and practice.</p>
-      </div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
+  <!-- ── Watermark ── -->
+  <Watermark text="DSC" />
 
-      <!-- Row 2 -->
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-white-block ca-center-1">
-        <h3 class="ca-subheading">Hands-on learning &<br>workshops</h3>
-        <p class="ca-text">Master modern frameworks, tools, and<br>platforms through peer-led study groups and<br>interactive tech workshops.</p>
-      </div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
+  <!-- ── About / Stats Section ── -->
+  <section class="home-about-section">
+    <div class="home-about-inner">
+      <div class="home-about-grid">
 
-      <!-- Row 3 -->
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-white-block ca-right-1">
-        <h3 class="ca-subheading">Real-world project<br>development</h3>
-        <p class="ca-text">Apply theoretical concepts to solve real<br>local problems, collaborate in teams, and<br>build impactful open-source projects.</p>
-      </div>
+        <!-- Left: narrative -->
+        <div>
+          <p class="home-section-eyebrow">Who We Are</p>
+          <h2 class="home-about-headline">
+            A community of<br /><em>builders, creators,</em><br />and innovators.
+          </h2>
+          <p class="home-about-body">
+            Developer Students Club at SRM IST Ramapuram is a Google-backed university community group.
+            We bridge the gap between classroom theory and real-world development through hands-on workshops,
+            hackathons, open-source projects, and industry collaborations.
+          </p>
+          <a href="/about" class="home-about-cta">
+            Our full story
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </a>
+        </div>
 
-      <!-- Row 4 -->
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-empty"></div>
-      <div class="ca-cell ca-white-block ca-center-2">
-        <h3 class="ca-subheading">Global network &<br>mentorship</h3>
-        <p class="ca-text">Connect with developers worldwide, learn<br>from industry experts, and prepare for a<br>career in the tech industry.</p>
+        <!-- Right: stat cards -->
+        <div class="home-stats-grid">
+          <div class="home-stat-card">
+            <span class="home-stat-number">300+</span>
+            <span class="home-stat-label">Active Members</span>
+          </div>
+          <div class="home-stat-card">
+            <span class="home-stat-number">40+</span>
+            <span class="home-stat-label">Events Hosted</span>
+          </div>
+          <div class="home-stat-card">
+            <span class="home-stat-number">3</span>
+            <span class="home-stat-label">Expert Domains</span>
+          </div>
+          <div class="home-stat-card">
+            <span class="home-stat-number">15+</span>
+            <span class="home-stat-label">Open-Source Projects</span>
+          </div>
+        </div>
+
       </div>
-      <div class="ca-cell ca-empty"></div>
     </div>
   </section>
 
-  <!-- ========== PARTNERSHIP SECTION ========== -->
-  <section class="partnership-section">
-    <div class="partnership-content reveal">
-      <h2 class="partnership-heading">Backed by Google Developers</h2>
+  <!-- ── Domains Preview Strip ── -->
+  <section class="home-domains-section">
+    <div class="home-domains-inner">
+      <div class="home-domains-header">
+        <h2 class="home-domains-title">Three domains.<br />Infinite possibilities.</h2>
+        <a href="/domains" class="home-domains-link">
+          Explore all domains
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="home-domains-grid">
+
+        <!-- Technical -->
+        <a href="/domains#technical" class="home-domain-card" id="home-domain-technical">
+          <div class="home-domain-icon">⚙️</div>
+          <div>
+            <div class="home-domain-name">Technical</div>
+            <p class="home-domain-desc">
+              Web dev, AI/ML, cloud infrastructure, open-source contributions, and competitive programming.
+            </p>
+          </div>
+          <div class="home-domain-tags">
+            <span class="home-domain-tag">Web Dev</span>
+            <span class="home-domain-tag">AI / ML</span>
+            <span class="home-domain-tag">Cloud</span>
+          </div>
+          <div class="home-domain-arrow">
+            Explore
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </div>
+        </a>
+
+        <!-- Creatives -->
+        <a href="/domains#creatives" class="home-domain-card" id="home-domain-creatives">
+          <div class="home-domain-icon">🎨</div>
+          <div>
+            <div class="home-domain-name">Creatives</div>
+            <p class="home-domain-desc">
+              UI/UX design, visual storytelling, branding, motion graphics, and digital media production.
+            </p>
+          </div>
+          <div class="home-domain-tags">
+            <span class="home-domain-tag">UI/UX</span>
+            <span class="home-domain-tag">Motion</span>
+            <span class="home-domain-tag">Branding</span>
+          </div>
+          <div class="home-domain-arrow">
+            Explore
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </div>
+        </a>
+
+        <!-- Operations -->
+        <a href="/domains#operations" class="home-domain-card" id="home-domain-operations">
+          <div class="home-domain-icon">📋</div>
+          <div>
+            <div class="home-domain-name">Operations</div>
+            <p class="home-domain-desc">
+              Event planning, community management, sponsorships, public relations, and club administration.
+            </p>
+          </div>
+          <div class="home-domain-tags">
+            <span class="home-domain-tag">Events</span>
+            <span class="home-domain-tag">PR</span>
+            <span class="home-domain-tag">Sponsorships</span>
+          </div>
+          <div class="home-domain-arrow">
+            Explore
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Featured Events Section ── -->
+  <section class="home-events-section">
+    <div class="home-events-inner">
+      <div class="home-events-header">
+        <div>
+          <p class="home-section-eyebrow">What We Do</p>
+          <h2 class="home-events-title">Upcoming & Recent Events</h2>
+        </div>
+        <a href="/gallery" class="home-domains-link">
+          View gallery
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="home-events-list">
+
+        <a href="/gallery" class="home-event-row" id="home-event-codefest">
+          <div class="home-event-date">
+            <span>28</span>
+            SEP 2026
+          </div>
+          <div class="home-event-info">
+            <div class="home-event-title-text">CodeFest 2026 — 24hr Hackathon</div>
+            <div class="home-event-meta">
+              <span class="home-event-badge hackathon">Hackathon</span>
+              <span class="home-event-location">SRM IST Ramapuram, Chennai</span>
+            </div>
+          </div>
+          <svg class="home-event-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+
+        <a href="/gallery" class="home-event-row" id="home-event-webdev">
+          <div class="home-event-date">
+            <span>14</span>
+            OCT 2026
+          </div>
+          <div class="home-event-info">
+            <div class="home-event-title-text">Modern Web Dev Workshop — React & Astro</div>
+            <div class="home-event-meta">
+              <span class="home-event-badge workshop">Workshop</span>
+              <span class="home-event-location">Online + SRM Campus</span>
+            </div>
+          </div>
+          <svg class="home-event-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+
+        <a href="/gallery" class="home-event-row" id="home-event-devmeet">
+          <div class="home-event-date">
+            <span>02</span>
+            NOV 2026
+          </div>
+          <div class="home-event-info">
+            <div class="home-event-title-text">DSC Dev Meetup — Community Networking Night</div>
+            <div class="home-event-meta">
+              <span class="home-event-badge networking">Networking</span>
+              <span class="home-event-location">SRM IST Ramapuram</span>
+            </div>
+          </div>
+          <svg class="home-event-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+
+        <a href="/gallery" class="home-event-row" id="home-event-opensource">
+          <div class="home-event-date">
+            <span>20</span>
+            NOV 2026
+          </div>
+          <div class="home-event-info">
+            <div class="home-event-title-text">Open Source Sprint — Hacktoberfest Edition</div>
+            <div class="home-event-meta">
+              <span class="home-event-badge opensource">Open Source</span>
+              <span class="home-event-location">Online</span>
+            </div>
+          </div>
+          <svg class="home-event-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Partnership / Google Developers Section ── -->
+  <section class="partnership-section reveal" id="home-partnership-section">
+    <div class="partnership-content">
+      <div class="home-partnership-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+        </svg>
+        Backed by Google Developers
+      </div>
+      <h2 class="partnership-heading">Supported by Google for Developers</h2>
       <p class="partnership-subheading">We are a university-based community group for students. Join our chapter to learn, connect, and build tech solutions for local businesses and your community.</p>
-      <a href="#" class="btn-partnership">Join Our Chapter</a>
+      <a href="/contact" class="btn-partnership" id="home-join-chapter-btn">Join Our Chapter</a>
     </div>
   </section>
 
-  <!-- ========== CONTRA LABS FOOTER ========== -->
-  <footer class="contra-footer" id="contact">
-    <div class="contra-content">
-      <h2 class="contra-logo contra-footer-logo">Developer Students Club</h2>
-      <p class="contra-subtitle">SRM IST, Ramapuram</p>
-      
-      <div class="contra-socials">
-        <a href="#" aria-label="X">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-          </svg>
-        </a>
+  <!-- ── Footer (React Island) ── -->
+  <Footer client:visible={{ rootMargin: '100px' }} active="home" />
 
-        <a href="#" aria-label="LinkedIn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-          </svg>
-        </a>
-        <a href="#" aria-label="Instagram">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-          </svg>
-        </a>
-      </div>
+  <!-- Scroll-reveal script -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-      <div class="contra-links">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#domains">Domains</a>
-        <a href="/gallery">Gallery</a>
-      </div>
-    </div>
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    });
+  </script>
 
-    <video data-src="https://framerusercontent.com/assets/hmg5dFU33RwVgzS4V0wrSxuKJ3E.mp4" class="contra-art" loop muted playsinline preload="none"></video>
-  </footer>
-
-  <!-- Main Behavior Script -->
-  <script src="../scripts/main.js"></script>
 </BaseLayout>
