@@ -4,19 +4,42 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, ogImage } = Astro.props;
+const pageTitle = title || 'Developer Students Club | SRM IST Ramapuram';
+const pageDesc = description || 'Developer Students Club (DSC) at SRM IST Ramapuram — Building the Developers of Tomorrow. Join our community of passionate student developers.';
+const pageOgImage = ogImage || '/creative-ai/hero_bg1.webp';
+const canonicalUrl = Astro.url.href;
+const isHome = Astro.url.pathname === '/';
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content={description || "Developer Students Club (DSC) at SRM IST Ramapuram — Building the Developers of Tomorrow. Join our community of passionate student developers."}>
+  <meta name="description" content={pageDesc}>
   <meta name="keywords" content="DSC, Developer Students Club, SRM IST, Ramapuram, coding, hackathon, workshops, student developers">
-  <title>{title || "Developer Students Club | SRM IST Ramapuram"}</title>
+  <title>{pageTitle}</title>
   <link rel="icon" type="image/webp" href="/creative-ai/image2-removebg-preview.webp">
+  <link rel="canonical" href={canonicalUrl}>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonicalUrl}>
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDesc}>
+  <meta property="og:image" content={pageOgImage}>
+  <meta property="og:site_name" content="DSC SRM IST Ramapuram">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@dscsrmrmp">
+  <meta name="twitter:title" content={pageTitle}>
+  <meta name="twitter:description" content={pageDesc}>
+  <meta name="twitter:image" content={pageOgImage}>
 
   <!-- Async font loading: preconnect first, then non-blocking stylesheet -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,10 +51,11 @@ const { title, description } = Astro.props;
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/playfairdisplay/v40/nuFkD-vYSZviVYUb_rj3ij__anPXDTnogkk7yRZrPA.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/bebasneue/v16/JTUSjIg69CK48gW7PXoo9WlhyyTh89Y.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/roboto/v51/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2">
-  <!-- LCP image preload: kick off hero background fetch before CSS is parsed -->
-  <link rel="preload" as="image" fetchpriority="high" href="/creative-ai/hero_bg1.webp">
+  <!-- LCP image preload: only on the home page where the hero is the LCP element -->
+  {isHome && <link rel="preload" as="image" fetchpriority="high" href="/creative-ai/hero_bg1.webp">}
 </head>
 <body>
   <slot />
 </body>
 </html>
+
