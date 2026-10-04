@@ -182,7 +182,7 @@
   // 6. INITIALIZATION
   // ============================================================
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function initAll() {
     Navigation.init();
     ScrollReveal.init();
     StatCounters.init();
@@ -210,5 +210,11 @@
         eyeComfortBtn.classList.toggle('active');
       });
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
 })();
