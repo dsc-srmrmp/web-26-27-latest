@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
   { key: 'contact', name: 'Contact', href: '/contact' },
 ];
 
-export default function MobileBottomNav({ active = 'home' }: Props) {
+export default function MobileNav({ active = 'home' }: Props) {
   const [selected, setSelected] = useState<NavKey>(active);
 
   useEffect(() => {
@@ -83,14 +83,14 @@ export default function MobileBottomNav({ active = 'home' }: Props) {
   };
 
   return (
-    <nav className="mobile-bottom-nav md:hidden" aria-label="Mobile bottom navigation">
+    <nav className="mobile-glass-nav md:hidden" aria-label="Mobile navigation">
       {navItems.map((item) => {
         const isActive = selected === item.key;
         return (
           <a
             key={item.key}
             href={item.href}
-            className={`mobile-bottom-tab ${isActive ? 'active' : ''}`}
+            className={`mobile-glass-tab ${isActive ? 'active' : ''}`}
             onClick={() => setSelected(item.key)}
             aria-label={item.name}
             aria-current={isActive ? 'page' : undefined}
