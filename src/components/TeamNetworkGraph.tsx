@@ -576,7 +576,16 @@ export default function TeamNetworkGraph({ members = [], onSelectMember }: Graph
           ctx.beginPath();
           ctx.arc(n.x, n.y, r - 1.5, 0, Math.PI * 2);
           ctx.clip();
-          ctx.drawImage(img, n.x - r, n.y - r, r * 2, r * 2);
+
+          // Calculate center-crop square to preserve aspect ratio without stretching
+          const nw = img.naturalWidth;
+          const nh = img.naturalHeight;
+          const size = Math.min(nw, nh);
+          const sx = (nw - size) / 2;
+          // Crop portrait images with face bias (22% from top)
+          const sy = nh > nw ? (nh - size) * 0.22 : (nh - size) / 2;
+
+          ctx.drawImage(img, sx, sy, size, size, n.x - r, n.y - r, r * 2, r * 2);
         } else {
           // Fallback circular badge with clean initials if image loading
           ctx.beginPath();
