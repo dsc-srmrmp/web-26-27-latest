@@ -554,6 +554,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           height: 58px;
           border-radius: 50%;
           object-fit: cover;
+          flex-shrink: 0;
           border: 1.5px solid rgba(255, 255, 255, 0.15);
           background-color: #0b110f;
         }
@@ -641,6 +642,17 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           border-radius: 10px;
           border: 1px solid rgba(232, 237, 233, 0.05);
           backdrop-filter: blur(10px);
+          max-width: 100%;
+        }
+
+        @media (max-width: 768px) {
+          .team-filter-tabs {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            padding: 4px;
+            width: 100%;
+          }
         }
 
         .team-tab-btn {
@@ -654,6 +666,13 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           text-transform: capitalize;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @media (max-width: 768px) {
+          .team-tab-btn {
+            padding: 6px 12px;
+            font-size: 11.5px;
+          }
         }
 
         .team-tab-btn:hover {
@@ -778,6 +797,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           gap: 24px;
           width: 100%;
           perspective: 1000px;
+          align-items: stretch;
         }
 
         @media (max-width: 1100px) {
@@ -790,26 +810,21 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         @media (max-width: 768px) {
           .team-showcase-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-          }
-          .team-domain-section {
-            margin-bottom: 44px;
-          }
-          .domain-section-title {
-            font-size: 1.2rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .team-showcase-grid {
-            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
+            width: 100%;
           }
           .team-domain-section {
             margin-bottom: 36px;
           }
           .domain-section-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .team-showcase-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
           }
         }
 
@@ -817,6 +832,9 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           position: relative;
           transform-style: preserve-3d;
           perspective: 1000px;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
         /* Dynamic Domain Glow Spotlights */
@@ -863,10 +881,13 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           -webkit-backdrop-filter: blur(20px);
           border: 1px solid rgba(255, 255, 255, 0.08);
           border-radius: 20px;
-          padding: 16px;
+          padding: 14px;
           display: flex;
           flex-direction: column;
           align-items: stretch;
+          justify-content: space-between;
+          height: 100%;
+          box-sizing: border-box;
           transition: border-color 0.4s ease, box-shadow 0.4s ease;
           transform-style: preserve-3d;
           position: relative;
@@ -887,11 +908,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           aspect-ratio: 1 / 1.15;
           border-radius: 12px;
           overflow: hidden;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
           transform: translateZ(28px);
           transform-style: preserve-3d;
           background-color: #0b110f;
           border: 1px solid rgba(255, 255, 255, 0.04);
+          flex-shrink: 0;
         }
 
         .team-member-image {
@@ -972,27 +994,43 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           transform-style: preserve-3d;
           text-align: left;
           padding: 0 4px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
         }
 
         .team-member-info h3 {
           font-family: 'Inter', sans-serif;
-          font-weight: 500;
-          font-size: 1.1rem;
+          font-weight: 600;
+          font-size: clamp(0.85rem, 2.2vw, 1.05rem);
           color: var(--text-color);
           margin-bottom: 4px;
           letter-spacing: -0.01em;
           transform: translateZ(8px);
+          line-height: 1.25;
+          min-height: 2.5em;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         .team-member-role {
           font-family: 'Inter', sans-serif;
           font-weight: 500;
-          font-size: 0.8rem;
+          font-size: clamp(0.68rem, 1.5vw, 0.78rem);
           color: #1dd1a1; /* Neon mint-green */
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin-bottom: 4px;
           transform: translateZ(14px);
+          line-height: 1.3;
+          min-height: 2.6em;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
       `}</style>
     </div>
