@@ -47,7 +47,7 @@ export default function Header({ active }: Props) {
       <header className="home-nav-header">
         {/* Desktop Logo */}
         <a href="/" className="home-nav-logo hidden md:flex">
-          <img src="/logo/club-logo.webp" alt="DSC Logo" width="80" height="80" style={{ height: '80px', width: 'auto', objectFit: 'contain' }} />
+          <img src="/logo/club-logo.webp" alt="DSC Logo" />
         </a>
 
         {/* Desktop Nav Pill */}
