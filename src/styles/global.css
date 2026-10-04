@@ -430,10 +430,78 @@ button {
   }
 }
 
-/* Hide marquee on mobile — conflicts with floating nav */
+/* ============================================================
+   EVENT STREAM MARQUEE (Top Ribbon)
+   ============================================================ */
+@keyframes dsc-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.dsc-marquee-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 38px;
+  overflow: hidden;
+  background: rgba(8, 14, 20, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  z-index: 150;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+}
+
+.dsc-marquee-content {
+  display: flex;
+  width: fit-content;
+  animation: dsc-marquee 35s linear infinite;
+  will-change: transform;
+}
+
+.dsc-marquee-item {
+  display: flex;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dsc-marquee-star {
+  color: #00f2fe;
+  margin: 0 24px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+}
+
 @media (max-width: 767px) {
   .dsc-marquee-container {
-    display: none !important;
+    height: 30px;
+    z-index: 998;
+  }
+
+  .dsc-marquee-item {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .dsc-marquee-star {
+    margin: 0 16px;
+    font-size: 11px;
   }
 }
 
@@ -2203,7 +2271,7 @@ a.home-join-btn:hover {
    ============================================================ */
 .mobile-glass-nav {
   position: fixed;
-  top: max(14px, env(safe-area-inset-top, 14px));
+  top: max(38px, calc(env(safe-area-inset-top, 0px) + 38px));
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 24px);
