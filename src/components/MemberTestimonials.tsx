@@ -80,7 +80,7 @@ export default function MemberTestimonials() {
                   style={{
                     backgroundColor: t.bgColor,
                     zIndex: testimonials.length - offset,
-                    transform: `translateX(${offset * 12}px) translateY(${offset * -10}px) rotate(${offset * 2}deg)`,
+                    ['--offset' as any]: offset,
                     opacity: offset > 2 ? 0 : 1 - offset * 0.15,
                     transition: 'all 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
