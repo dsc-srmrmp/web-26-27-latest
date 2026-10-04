@@ -154,6 +154,10 @@
 }
 
 @media (max-width: 640px) {
+  .hero-dsc-title {
+    font-size: clamp(6rem, 22vw, 10rem);
+  }
+
   .hero-dsc-subtitle {
     letter-spacing: 0.15em;
     margin-top: 12px;
@@ -161,6 +165,90 @@
   .hero-dsc-campus {
     margin-top: 6px;
   }
+
+  .hero-dsc-center {
+    padding-bottom: 120px;
+  }
+}
+
+.hero-mobile-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 14px;
+  text-align: center;
+  letter-spacing: 0.02em;
+  padding: 0 16px;
+  pointer-events: auto;
+}
+
+.hero-mobile-desc {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 6px;
+  max-width: 290px;
+  text-align: center;
+  line-height: 1.5;
+  padding: 0 16px;
+  pointer-events: auto;
+}
+
+.hero-mobile-actions {
+  position: absolute;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  left: 14px;
+  right: 14px;
+  max-width: 440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+.hero-mobile-card {
+  background: rgba(10, 15, 22, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  padding: 12px 14px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 
+    0 8px 24px -4px rgba(0, 0, 0, 0.6),
+    0 0 16px rgba(0, 242, 254, 0.08);
+}
+
+.hero-mobile-card:active {
+  transform: scale(0.97);
+  background: rgba(14, 20, 28, 0.88);
+  border-color: rgba(0, 242, 254, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 242, 254, 0.2);
+}
+
+.hero-card-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.hero-card-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ============================================================

@@ -191,9 +191,15 @@ export default function Hero() {
           <h1 className="hero-anim hero-reveal hero-dsc-title">
             DSC
           </h1>
+          <p className="hero-mobile-subtitle sm:hidden">
+            Developer Students Club • SRM IST Ramapuram
+          </p>
+          <p className="hero-mobile-desc sm:hidden">
+            Building a community of developers, designers, and innovators at SRM IST Ramapuram.
+          </p>
         </div>
 
-        {/* Layer 4 — Bottom-left paragraph */}
+        {/* Layer 4 — Bottom-left paragraph (Desktop only) */}
         <div
           className="hidden sm:block hero-anim hero-fade"
           style={{
@@ -210,15 +216,14 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* Layer 5 — Bottom-right block */}
+        {/* Layer 5 — Bottom-right block (Desktop only) */}
         <div
-          className="hero-anim hero-fade"
+          className="hidden sm:flex hero-anim hero-fade"
           style={{
             position: 'absolute',
             bottom: '40px',
             right: '40px',
             maxWidth: '260px',
-            display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
             gap: '20px',
@@ -229,6 +234,18 @@ export default function Hero() {
           <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.625, fontFamily: "'Inter', sans-serif" }}>
             From hands-on workshops and intense hackathons to open-source contributions and industry collaborations — bridging the gap between classroom learning and real-world development.
           </p>
+        </div>
+
+        {/* Mobile Quick-Action Cards (< 640px) */}
+        <div className="hero-mobile-actions sm:hidden hero-anim hero-fade">
+          <a href="/domains" className="hero-mobile-card">
+            <span className="hero-card-title">Explore Domains</span>
+            <span className="hero-card-subtitle">Tech • Creatives • Ops</span>
+          </a>
+          <a href="/gallery" className="hero-mobile-card">
+            <span className="hero-card-title">Upcoming Events</span>
+            <span className="hero-card-subtitle">Hackathons & Sessions</span>
+          </a>
         </div>
       </section>
     </div>
