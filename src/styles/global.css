@@ -728,11 +728,13 @@ button {
 .member-testimonials-section {
   position: relative;
   width: 100%;
-  padding: 350px 0 100px; /* Increased top padding to offset negative margin */
-  margin-top: -250px; /* Pull it up under the previous section more to hide gap */
+  padding: 300px 0 100px;
+  margin-top: -260px;
   z-index: 0;
   background: url('/bg/testimonials-bg.png') center/cover no-repeat;
   overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 140px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 140px);
 }
 
 
@@ -913,21 +915,23 @@ button {
 .partnership-section {
   position: relative;
   width: 100%;
-  height: calc(80vh + 3cm);
-  min-height: 500px;
-  padding-top: 0.5cm;
-  padding-bottom: 2.5cm;
+  min-height: 920px;
+  height: clamp(860px, 95vh, 1050px);
+  padding-top: clamp(60px, 8vh, 90px);
+  padding-bottom: 80px;
+  margin-top: -80px;
   background-image: url('/creative-ai/partnership_bg.webp');
   background-size: cover;
-  background-position: center;
+  background-position: center 36%;
   background-repeat: no-repeat;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   z-index: 1;
-  -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 95%);
-  mask-image: linear-gradient(to bottom, black 65%, transparent 95%);
+  -webkit-mask-image: linear-gradient(to bottom, black 72%, transparent 96%);
+  mask-image: linear-gradient(to bottom, black 72%, transparent 96%);
 }
 
 .partnership-content {
@@ -1331,8 +1335,11 @@ button {
   .partnership-section {
     height: auto;
     min-height: 440px;
+    margin-top: 0;
     padding: 60px 16px 70px;
     background-position: center bottom;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 
   .partnership-heading {
@@ -1644,27 +1651,17 @@ button {
 /* ========== CREATIVE AI SECTION ========== */
 .creative-ai-section {
   width: 100%;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #0c0f14;
-  position: relative;
-  padding: 30px 20px;
-  box-sizing: border-box;
-}
-
-.ca-container {
-  width: min(94vw, calc(100vh - 50px), 1120px);
   aspect-ratio: 1 / 1;
   position: relative;
-  background-image: url('/creative-ai/bg.webp');
-  background-size: 100% 100%;
+  background-image: url('/creative-ai/bg.png');
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin: 0 auto;
-  container-type: inline-size;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+  background-color: #1a1a18;
+  margin-top: -60px;
+  z-index: 2;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 80px, black calc(100% - 140px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 80px, black calc(100% - 140px), transparent 100%);
 }
 
 .ca-grid {
@@ -1698,45 +1695,44 @@ button {
 
 .ca-white-block {
   background-color: #f4f3ef;
-  padding: clamp(8px, 1.8cqi, 32px) clamp(10px, 2.2cqi, 36px);
+  padding: clamp(20px, 2.5vw, 42px);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .ca-span-2 {
   grid-column: span 2;
-  padding: clamp(14px, 3.8cqi, 48px) clamp(18px, 4.5cqi, 56px);
+  padding: clamp(30px, 3.8vw, 60px) clamp(30px, 4.5vw, 80px);
 }
 
 .ca-heading {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1rem, 2.3cqi, 2.5rem);
+  font-size: clamp(1.6rem, 2.4vw, 2.8rem);
   font-weight: 500;
   color: #222;
   line-height: 1.15;
-  margin-bottom: clamp(4px, 1cqi, 14px);
+  margin-bottom: clamp(10px, 1.2vw, 20px);
   margin-top: 0;
 }
 
 .ca-subheading {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(0.72rem, 1.35cqi, 1.45rem);
+  font-size: clamp(1.05rem, 1.35vw, 1.6rem);
   font-weight: 500;
   color: #222;
-  line-height: 1.15;
-  margin-bottom: clamp(3px, 0.8cqi, 10px);
+  line-height: 1.2;
+  margin-bottom: clamp(6px, 0.9vw, 15px);
   margin-top: 0;
 }
 
 .ca-text {
   font-family: 'Inter', sans-serif;
-  font-size: clamp(0.56rem, 0.88cqi, 0.9rem);
+  font-size: clamp(0.72rem, 0.9vw, 0.95rem);
   color: #555;
-  line-height: 1.35;
+  line-height: 1.5;
   margin: 0;
 }
 
@@ -1745,19 +1741,13 @@ button {
     aspect-ratio: auto;
     min-height: auto;
     height: auto;
+    margin-top: 0;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
     background-image: none !important;
     background-color: #0c0f14;
     padding: 60px 16px;
     display: block;
-  }
-
-  .ca-container {
-    width: 100%;
-    max-width: 480px;
-    aspect-ratio: auto;
-    background-image: none !important;
-    box-shadow: none;
-    margin: 0 auto;
   }
 
   .ca-grid {
