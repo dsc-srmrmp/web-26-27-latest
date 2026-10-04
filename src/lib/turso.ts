@@ -53,10 +53,10 @@ export function formatMember(row: DbTeamMember): FormattedTeamMember {
     // Domain 4 — President; always displayed with LEAD tag
     domain = 'presidency';
     role = 'President';
-  } else if (teamRaw.includes('TECHNICAL')) {
-    // Domain 1
+  } else if (teamRaw.includes('TECHNICAL') || teamRaw.includes('HARDWARE')) {
+    // Domain 1 — Technical (includes HARDWARE domain)
     domain = 'technical';
-    role = isLead ? 'Technical Lead' : 'Technical Member';
+    role = isLead ? 'Technical Lead' : (teamRaw.includes('HARDWARE') ? 'Hardware Member' : 'Technical Member');
   } else if (teamRaw.includes('OPERATIONS')) {
     // Domain 2
     domain = 'operations';
@@ -79,7 +79,7 @@ export function formatMember(row: DbTeamMember): FormattedTeamMember {
     role,
     domain,
     team: row.team,
-    image: row.img,
+    image: row.img || '',
     github: row.github || (isPresident ? 'https://github.com/developer-students-club' : undefined),
     linkedin: row.linkedin || (isPresident ? 'https://www.linkedin.com/company/dscsrm/' : undefined),
     insta: row.insta || (isPresident ? 'https://www.instagram.com/dscsrmrmp/' : undefined),
@@ -102,12 +102,12 @@ export async function getTeamMembers(): Promise<FormattedTeamMember[]> {
           WHEN lead = 1 AND team LIKE '%TECHNICAL%' THEN 1
           WHEN lead = 1 AND team LIKE '%OPERATIONS%' THEN 2
           WHEN lead = 1 AND team LIKE '%CREATIVES%' THEN 3
-          WHEN team LIKE '%TECHNICAL%' THEN 4
+          WHEN team LIKE '%TECHNICAL%' OR team LIKE '%HARDWARE%' THEN 4
           WHEN team LIKE '%OPERATIONS%' THEN 5
           WHEN team LIKE '%CREATIVES%' THEN 6
           ELSE 7
         END,
-        name ASC
+        id ASC
     `;
     const result = await client.execute(sql);
     const rows = result.rows as unknown as DbTeamMember[];

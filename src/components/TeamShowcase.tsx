@@ -216,13 +216,19 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
       <div className="team-member-card">
         {/* Image Container */}
         <div className="team-image-container">
-          <img
-            src={m.image}
-            alt={m.name}
-            className="team-member-image"
-            style={getImageStyle(m)}
-            loading="lazy"
-          />
+          {m.image ? (
+            <img
+              src={m.image}
+              alt={m.name}
+              className="team-member-image"
+              style={getImageStyle(m)}
+              loading="lazy"
+            />
+          ) : (
+            <div className="team-member-placeholder-avatar">
+              <span>{m.name.split(' ').map((n) => n[0]).filter(Boolean).slice(0, 2).join('')}</span>
+            </div>
+          )}
           <div className="team-image-overlay" />
 
           {/* Overlay Social Icons Row */}
@@ -359,7 +365,13 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
               <div className="panel-card-inner">
                 <button className="panel-close-btn" onClick={() => setSelectedGraphMember(null)}>×</button>
                 <div className="panel-header-row">
-                  <img src={selectedGraphMember.image} alt={selectedGraphMember.name} className="panel-avatar" />
+                  {selectedGraphMember.image ? (
+                    <img src={selectedGraphMember.image} alt={selectedGraphMember.name} className="panel-avatar" />
+                  ) : (
+                    <div className="panel-avatar panel-avatar-placeholder">
+                      {selectedGraphMember.name.split(' ').map((n) => n[0]).filter(Boolean).slice(0, 2).join('')}
+                    </div>
+                  )}
                   <div>
                     <h4>{selectedGraphMember.name}</h4>
                     <p className="panel-role">{selectedGraphMember.role}</p>
@@ -557,6 +569,18 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           flex-shrink: 0;
           border: 1.5px solid rgba(255, 255, 255, 0.15);
           background-color: #0b110f;
+        }
+
+        .panel-avatar-placeholder {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: radial-gradient(circle at center, #1a382d 0%, #0b110f 80%);
+          color: #1dd1a1;
+          font-family: 'Inter', sans-serif;
+          font-weight: 700;
+          font-size: 1.15rem;
+          letter-spacing: 0.05em;
         }
 
         .panel-header-row h4 {
@@ -914,6 +938,22 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           background-color: #0b110f;
           border: 1px solid rgba(255, 255, 255, 0.04);
           flex-shrink: 0;
+        }
+
+        .team-member-placeholder-avatar {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: radial-gradient(circle at center, #1a382d 0%, #0b110f 80%);
+          color: #1dd1a1;
+          font-family: 'Inter', sans-serif;
+          font-size: 2.2rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          border-radius: 12px;
+          user-select: none;
         }
 
         .team-member-image {
