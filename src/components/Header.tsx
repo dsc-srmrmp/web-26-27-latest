@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import MobileBottomNav, { type NavKey } from './MobileBottomNav';
 
 interface Props {
-  active?: 'home' | 'about' | 'domains' | 'gallery' | 'team' | 'contact';
+  active?: NavKey;
 }
 
 export default function Header({ active }: Props) {
@@ -169,6 +170,9 @@ export default function Header({ active }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Floating Mobile Liquid Glass Bottom Navigation */}
+      <MobileBottomNav active={active} />
     </>
   );
 }
