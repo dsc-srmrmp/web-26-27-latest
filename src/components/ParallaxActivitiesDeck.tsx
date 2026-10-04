@@ -71,25 +71,27 @@ export default function ParallaxActivitiesDeck() {
         duration: 0.8,
         stagger: 0.15,
         ease: 'power2.out',
+        immediateRender: false,
       });
 
-      // Staggered parallax cards lift
+      // Staggered parallax cards lift (responsive scrub in both directions)
       cardsRef.current.forEach((card, idx) => {
         if (!card) return;
 
         gsap.fromTo(
           card,
           {
-            y: 80,
+            y: 60,
             opacity: 0,
-            scale: 0.96,
+            scale: 0.97,
           },
           {
             scrollTrigger: {
               trigger: card,
-              start: 'top 85%',
-              end: 'top 45%',
-              scrub: 0.8,
+              start: 'top 88%',
+              end: 'top 55%',
+              scrub: 0.4,
+              immediateRender: false,
             },
             y: 0,
             opacity: 1,

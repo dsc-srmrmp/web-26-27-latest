@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Header from './Header';
@@ -15,8 +15,6 @@ export default function Hero() {
   const dscCenterRef = useRef<HTMLDivElement>(null);
   const leftBlockRef = useRef<HTMLDivElement>(null);
   const rightBlockRef = useRef<HTMLDivElement>(null);
-
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   // Mouse 3D tilt tracking for DSC centerpiece
   useEffect(() => {
@@ -44,91 +42,126 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // GSAP Entrance & ScrollTrigger Choreography
+  // GSAP Entrance & ScrollTrigger Choreography (Unpinned Natural Parallax)
   useEffect(() => {
     const heroSection = heroSectionRef.current;
     const dscTitle = dscTitleRef.current;
     if (!heroSection || !dscTitle) return;
 
     const ctx = gsap.context(() => {
-      // 1. Initial entrance timeline
-      const enterTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      // 1. Initial entrance animation (subtle and non-destructive)
+      gsap.fromTo(
+        dscTitle,
+        { scale: 0.92, opacity: 0, filter: 'blur(10px)' },
+        { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power2.out' }
+      );
 
-      enterTl
-        .fromTo(
-          dscTitle,
-          { scale: 0.82, opacity: 0, filter: 'blur(20px)', letterSpacing: '0.08em' },
-          { scale: 1, opacity: 1, filter: 'blur(0px)', letterSpacing: '-0.02em', duration: 1.2 }
-        )
-        .fromTo(
-          '.hero-fade-in',
-          { opacity: 0, y: 28 },
-          { opacity: 1, y: 0, duration: 0.8, stagger: 0.12 },
-          '-=0.6'
-        );
+      gsap.fromTo(
+        '.hero-fade-in',
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out' }
+      );
 
-      // 2. Responsive ScrollTrigger Parallax Warp
+      // 2. Responsive ScrollTrigger Parallax (Unpinned, buttery-smooth in both directions)
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 769px)', () => {
-        // Desktop scroll warp: DSC zooms through 3D portal
-        const scrollTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: heroSection,
-            start: 'top top',
-            end: '+=100%',
-            scrub: 1.2,
-            pin: true,
-            anticipatePin: 1,
-            onUpdate: (self) => {
-              setScrollProgress(self.progress);
-            },
+        // Desktop smooth parallax scrub with explicit REST state (opacity: 1 on scroll up)
+        gsap.fromTo(
+          dscTitle,
+          {
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            filter: 'blur(0px)',
           },
-        });
+          {
+            scrollTrigger: {
+              trigger: heroSection,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.5,
+              immediateRender: false,
+            },
+            y: 180,
+            scale: 1.45,
+            opacity: 0,
+            filter: 'blur(14px)',
+            ease: 'none',
+          }
+        );
 
-        scrollTl
-          .to(dscTitle, {
-            scale: 2.4,
-            opacity: 0,
-            filter: 'blur(18px)',
-            y: -80,
-            ease: 'power2.inOut',
-          }, 0)
-          .to([leftBlockRef.current, rightBlockRef.current], {
-            y: -140,
-            opacity: 0,
-            stagger: 0.06,
-            ease: 'power2.in',
-          }, 0);
+        const sideBlocks = [leftBlockRef.current, rightBlockRef.current].filter(Boolean);
+        if (sideBlocks.length > 0) {
+          gsap.fromTo(
+            sideBlocks,
+            {
+              y: 0,
+              opacity: 1,
+            },
+            {
+              scrollTrigger: {
+                trigger: heroSection,
+                start: 'top top',
+                end: 'bottom 35%',
+                scrub: 0.3,
+                immediateRender: false,
+              },
+              y: -80,
+              opacity: 0,
+              ease: 'none',
+            }
+          );
+        }
       });
 
       mm.add('(max-width: 768px)', () => {
-        // Mobile scroll warp: subtle depth scale without blocking scroll
-        const scrollTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: heroSection,
-            start: 'top top',
-            end: '+=65%',
-            scrub: 0.8,
-            pin: true,
-            onUpdate: (self) => {
-              setScrollProgress(self.progress);
-            },
+        // Mobile smooth parallax scrub
+        gsap.fromTo(
+          dscTitle,
+          {
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            filter: 'blur(0px)',
           },
-        });
+          {
+            scrollTrigger: {
+              trigger: heroSection,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.3,
+              immediateRender: false,
+            },
+            y: 70,
+            scale: 1.25,
+            opacity: 0,
+            filter: 'blur(8px)',
+            ease: 'none',
+          }
+        );
 
-        scrollTl
-          .to(dscTitle, {
-            scale: 1.6,
-            opacity: 0,
-            filter: 'blur(12px)',
-            ease: 'power1.inOut',
-          }, 0)
-          .to('.hero-mobile-narrative', {
-            opacity: 0,
-            y: -50,
-            ease: 'power1.in',
-          }, 0);
+        if (leftBlockRef.current) {
+          gsap.fromTo(
+            leftBlockRef.current,
+            {
+              y: 0,
+              opacity: 1,
+            },
+            {
+              scrollTrigger: {
+                trigger: heroSection,
+                start: 'top top',
+                end: 'bottom 40%',
+                scrub: 0.2,
+                immediateRender: false,
+              },
+              y: -40,
+              opacity: 0,
+              ease: 'none',
+            }
+          );
+        }
       });
     }, heroSectionRef);
 
@@ -496,7 +529,7 @@ export default function Hero() {
       {/* ===== Hero Section ===== */}
       <section ref={heroSectionRef} className="hero-section">
         {/* Three.js 3D Interactive Particle Constellation */}
-        <ThreeDscCanvas scrollProgress={scrollProgress} />
+        <ThreeDscCanvas />
 
         {/* Ambient Side Rays Teal Lighting */}
         <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>

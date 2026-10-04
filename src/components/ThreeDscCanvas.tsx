@@ -2,14 +2,11 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 interface Props {
-  scrollProgress?: number; // 0 to 1
   className?: string;
 }
 
-export default function ThreeDscCanvas({ scrollProgress = 0, className = '' }: Props) {
+export default function ThreeDscCanvas({ className = '' }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<number>(scrollProgress);
-  scrollRef.current = scrollProgress;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -188,7 +185,22 @@ export default function ThreeDscCanvas({ scrollProgress = 0, className = '' }: P
       renderer.setSize(width, height);
     };
 
-    window.addEventListener('resize', onResize);
+    // Passive Scroll Tracking with smooth interpolation
+    let targetScroll = 0;
+    let smoothScroll = 0;
+
+    const calcScroll = () => {
+      const heroHeight = container ? container.clientHeight : (window.innerHeight || 800);
+      return Math.min(1, Math.max(0, (window.scrollY || 0) / Math.max(heroHeight, 1)));
+    };
+
+    targetScroll = calcScroll();
+    smoothScroll = targetScroll;
+
+    const onScroll = () => {
+      targetScroll = calcScroll();
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     // Animation Loop
     let animationFrameId: number;
@@ -198,7 +210,9 @@ export default function ThreeDscCanvas({ scrollProgress = 0, className = '' }: P
       animationFrameId = requestAnimationFrame(animate);
 
       const elapsedTime = clock.getElapsedTime();
-      const scroll = scrollRef.current || 0;
+
+      // Smooth scroll lerp (momentum in both directions)
+      smoothScroll += (targetScroll - smoothScroll) * 0.08;
 
       // Mouse lerp
       mouse.x += (mouse.targetX - mouse.x) * 0.05;
@@ -214,9 +228,9 @@ export default function ThreeDscCanvas({ scrollProgress = 0, className = '' }: P
       lineSegments.rotation.y = networkNodes.rotation.y;
       lineSegments.rotation.x = networkNodes.rotation.x;
 
-      // Camera push-through warp on scroll
-      camera.position.z = 580 - scroll * 420;
-      camera.position.y = -scroll * 100;
+      // Camera push-through warp on scroll (smooth 3D depth)
+      camera.position.z = 580 - smoothScroll * 380;
+      camera.position.y = -smoothScroll * 80;
 
       // Update network node positions & connect nearby points with lines
       let lineIndex = 0;
@@ -300,6 +314,7 @@ export default function ThreeDscCanvas({ scrollProgress = 0, className = '' }: P
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onScroll);
 
       if (container && renderer.domElement.parentElement === container) {
         container.removeChild(renderer.domElement);
