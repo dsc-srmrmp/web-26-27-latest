@@ -2495,6 +2495,153 @@ a.home-join-btn:hover {
 }
 
 /* ============================================================
+   LIQUID GLASS MOBILE BOTTOM NAVIGATION BAR
+   ============================================================ */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 390px;
+  height: 56px;
+  background: rgba(13, 22, 30, 0.68);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  z-index: 1000;
+  pointer-events: auto;
+  user-select: none;
+  box-shadow: 
+    0 20px 45px -8px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 28px rgba(0, 242, 254, 0.08),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+@media (min-width: 768px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+.mobile-bottom-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  min-width: 40px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.62);
+  background: transparent;
+  transition: 
+    background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.25s ease,
+    padding 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+  position: relative;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-bottom-tab .tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: currentColor;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.mobile-bottom-tab .tab-label {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-left: 0;
+  transition: 
+    max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.22s ease,
+    margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Active tab: Expanding pill state matching reference */
+.mobile-bottom-tab.active {
+  background: #ffffff;
+  color: #0b0f17;
+  padding: 0 15px;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+.mobile-bottom-tab.active .tab-icon {
+  color: #0b0f17;
+  transform: scale(1.04);
+}
+
+.mobile-bottom-tab.active .tab-label {
+  max-width: 80px;
+  opacity: 1;
+  margin-left: 7px;
+  color: #0b0f17;
+}
+
+.mobile-bottom-tab:not(.active):hover {
+  color: #ffffff;
+}
+
+.mobile-bottom-tab:not(.active):active {
+  transform: scale(0.92);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Responsive micro-adjustments for narrow screens (< 375px) */
+@media (max-width: 374px) {
+  .mobile-bottom-nav {
+    width: calc(100% - 16px);
+    height: 52px;
+    padding: 5px 6px;
+  }
+  .mobile-bottom-tab {
+    height: 38px;
+    min-width: 36px;
+    padding: 0 8px;
+  }
+  .mobile-bottom-tab.active {
+    padding: 0 12px;
+  }
+  .mobile-bottom-tab .tab-label {
+    font-size: 11.5px;
+  }
+}
+
+/* Bottom safe clearance for mobile main content */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 16px)) !important;
+  }
+}
+
+/* ============================================================
    17. PROJECT SHOWCASE SECTION
    ============================================================ */
 .showcase-section {
