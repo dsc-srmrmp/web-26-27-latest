@@ -2277,10 +2277,10 @@ a.home-join-btn:hover {
   width: calc(100% - 24px);
   max-width: 390px;
   height: 56px;
-  background: rgba(13, 22, 30, 0.68);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -2291,11 +2291,8 @@ a.home-join-btn:hover {
   pointer-events: auto;
   user-select: none;
   box-shadow: 
-    0 20px 45px -8px rgba(0, 0, 0, 0.75),
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 28px rgba(0, 242, 254, 0.08),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.32),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+    0 10px 30px -5px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
@@ -2314,7 +2311,7 @@ a.home-join-btn:hover {
   padding: 0 10px;
   border-radius: 9999px;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.85);
   background: transparent;
   transition: 
     background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
