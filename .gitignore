@@ -46,3 +46,5 @@ dist/
 
 # Vite/Astro cache
 .vite/
+.vercel
+.env*
