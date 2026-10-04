@@ -69,8 +69,8 @@ const teamMembers = await getTeamMembers();
   <!-- Navigation (React Island) -->
   <Header client:load active="team" />
 
-  <main class="contact-container" style="max-width: 1100px;">
-    <div class="contact-layout-wrapper" style="--watermark-size: clamp(6.5rem, 22vw, 16rem);">
+  <main class="contact-container">
+    <div class="contact-layout-wrapper">
       
       <!-- Reusable 3D Parallax Watermark component -->
       <Watermark text="TEAM" />
@@ -80,13 +80,13 @@ const teamMembers = await getTeamMembers();
 
       <!-- Title / Intro Header -->
       <section class="team-header-intro">
-        <p class="left-subtext text-center intro-subtext" style="max-width: 600px; margin: 40px auto 48px; font-size: 16px; opacity: 0; filter: blur(4px);">
+        <p class="left-subtext text-center intro-subtext" style="max-width: 600px; margin: 30px auto 40px; font-size: 16px; opacity: 0; filter: blur(4px);">
           Developer Students Club is built by a team of passionate developers, designers, and innovators who believe in the power of community-driven learning.
         </p>
       </section>
 
       <!-- Team Showcase Cards Grid (React Island) -->
-      <section class="team-showcase-section" style="position: relative; z-index: 10; min-height: 1050px;">
+      <section class="team-showcase-section" style="position: relative; z-index: 10; width: 100%;">
         <TeamShowcase client:idle initialMembers={teamMembers} />
       </section>
 
@@ -203,6 +203,12 @@ const teamMembers = await getTeamMembers();
   }
 
   @media (max-width: 768px) {
+    .team-header-intro .intro-subtext {
+      margin: 16px auto 28px !important;
+      font-size: 14px !important;
+      padding: 0 12px;
+    }
+
     .team-cta-box {
       flex-direction: column;
       align-items: flex-start;
