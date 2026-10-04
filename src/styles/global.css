@@ -342,6 +342,13 @@ button {
   }
 }
 
+/* Hide marquee on mobile — conflicts with floating nav */
+@media (max-width: 767px) {
+  .dsc-marquee-container {
+    display: none !important;
+  }
+}
+
 /* ============================================================
    4. GLOBAL NAVIGATION
    ============================================================ */
