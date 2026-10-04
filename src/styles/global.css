@@ -1328,16 +1328,32 @@ button {
 }
 
 @media (max-width: 768px) {
+  .partnership-section {
+    height: auto;
+    min-height: 440px;
+    padding: 60px 16px 70px;
+    background-position: center bottom;
+  }
+
   .partnership-heading {
-    font-size: 2.2rem;
+    font-size: clamp(2rem, 6.5vw, 2.6rem);
+    color: #ffffff;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
   }
 
   .partnership-subheading {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    color: #f1f5f9;
+    max-width: 440px;
+    margin: 0 auto 28px;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
   }
 
-  .partnership-section {
-    height: 60vh;
+  .btn-partnership {
+    padding: 12px 28px;
+    background-color: rgba(10, 15, 22, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   }
 
   .nav-links {
@@ -1917,19 +1933,64 @@ button {
 }
 
 @media (max-width: 768px) {
-  .contra-logo {
-    font-size: 2.5rem;
+  .contra-footer {
+    height: auto;
+    min-height: 480px;
+    padding: 60px 16px 40px;
+    margin-top: 0;
   }
 
-  .contra-logo .sans {
-    font-size: 1.5rem;
+  .contra-content {
+    margin-top: 0;
+    padding: 28px 20px;
+    width: 100%;
+    max-width: 440px;
+    background: rgba(10, 15, 22, 0.84);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75);
+  }
+
+  .contra-logo {
+    font-size: 2.2rem;
+  }
+
+  .contra-footer-logo {
+    font-size: 1.8rem !important;
+    color: #ffffff !important;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .contra-subtitle {
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .contra-socials {
+    margin-bottom: 24px;
+    gap: 20px;
+  }
+
+  .contra-socials a {
+    color: #ffffff !important;
   }
 
   .contra-links {
-    gap: 20px;
-    flex-direction: column;
+    gap: 10px 18px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
+  .contra-links a {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 0.9rem;
+    padding: 4px 6px;
+  }
 }
 
 /* ============================================================
@@ -2674,6 +2735,34 @@ a.home-join-btn:hover {
   font-weight: 700;
   color: #333;
   font-size: 1.1rem;
+}
+
+@media (max-width: 640px) {
+  .alumni-marquee-section {
+    padding: 40px 0 100px;
+  }
+
+  .alumni-heading {
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+  }
+
+  .alumni-card {
+    width: 130px;
+    height: 75px;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+
+  .alumni-card img {
+    max-height: 40px !important;
+    max-width: 90px !important;
+    object-fit: contain;
+  }
+
+  .marquee-track {
+    gap: 16px;
+  }
 }
 
 /* ============================================================
