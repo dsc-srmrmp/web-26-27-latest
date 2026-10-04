@@ -287,46 +287,142 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
     </div>
   );
 
+  const renderDomainIcon = (key: string, isActive: boolean) => {
+    switch (key) {
+      case 'all':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? '2.2' : '2'} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" fill={isActive ? 'currentColor' : 'none'} />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        );
+      case 'core':
+      case 'presidency':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={isActive ? '1.5' : '2'} strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+        );
+      case 'technical':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? '2.2' : '2'} strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="16 18 22 12 16 6" />
+            <polyline points="8 6 2 12 8 18" />
+          </svg>
+        );
+      case 'operations':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? '2.2' : '2'} strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+        );
+      case 'creatives':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? '2.2' : '2'} strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="13.5" cy="6.5" r="1.5" fill={isActive ? 'currentColor' : 'none'} />
+            <circle cx="17.5" cy="10.5" r="1.5" fill={isActive ? 'currentColor' : 'none'} />
+            <circle cx="8.5" cy="7.5" r="1.5" fill={isActive ? 'currentColor' : 'none'} />
+            <circle cx="6.5" cy="12.5" r="1.5" fill={isActive ? 'currentColor' : 'none'} />
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        );
+    }
+  };
+
   return (
     <div className="team-component-wrapper">
-      {/* Toolbar view selectors */}
+      {/* Unified Liquid Glass Toolbar: View Mode & Domain Filters attached in same card */}
       <div className="team-toolbar-controls">
-        <div className="view-mode-toggles">
-          <button
-            className={`toolbar-view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-            onClick={() => setViewMode('grid')}
-          >
-            Grid Cards View
-          </button>
-          <button
-            className={`toolbar-view-btn ${viewMode === 'graph' ? 'active' : ''}`}
-            onClick={() => {
-              setViewMode('graph');
-              setSelectedGraphMember(null);
-            }}
-          >
-            Graph View
-          </button>
-        </div>
+        <nav className="team-glass-bar" aria-label="Team view and domain controls">
+          {/* View Modes Group */}
+          <div className="team-glass-group view-modes-group">
+            <button
+              type="button"
+              className={`team-glass-tab ${viewMode === 'grid' ? 'active' : ''}`}
+              onClick={() => setViewMode('grid')}
+              title="Grid Cards View"
+              aria-label="Grid Cards View"
+            >
+              <span className="tab-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill={viewMode === 'grid' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={viewMode === 'grid' ? '1.5' : '2'} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+              </span>
+              <span className="tab-label">Grid Cards</span>
+            </button>
 
-        {/* Display Category Filter tabs only when in Grid View */}
-        {viewMode === 'grid' && (
-          <div className="team-filter-tabs">
-            {tabs.map(tab => {
+            <button
+              type="button"
+              className={`team-glass-tab ${viewMode === 'graph' ? 'active' : ''}`}
+              onClick={() => {
+                setViewMode('graph');
+                setSelectedGraphMember(null);
+              }}
+              title="Graph View"
+              aria-label="Graph View"
+            >
+              <span className="tab-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="6" cy="6" r="3" fill={viewMode === 'graph' ? 'currentColor' : 'none'} />
+                  <circle cx="18" cy="8" r="3" fill={viewMode === 'graph' ? 'currentColor' : 'none'} />
+                  <circle cx="12" cy="18" r="3" fill={viewMode === 'graph' ? 'currentColor' : 'none'} />
+                  <line x1="8.5" y1="7" x2="15.5" y2="7.5" />
+                  <line x1="7.5" y1="8.5" x2="10.5" y2="15.5" />
+                  <line x1="16.5" y1="10" x2="13.5" y2="15.5" />
+                </svg>
+              </span>
+              <span className="tab-label">Graph View</span>
+            </button>
+          </div>
+
+          <div className="team-glass-divider" />
+
+          {/* Domain Filter Tabs Group */}
+          <div className="team-glass-group domain-tabs-group">
+            {tabs.map((tab) => {
               const count = getTabCount(tab.key);
               if (count === 0 && tab.key !== 'all') return null;
+              const isActive = viewMode === 'grid' && activeTab === tab.key;
               return (
                 <button
                   key={tab.key}
-                  className={`team-tab-btn ${activeTab === tab.key ? 'active' : ''}`}
-                  onClick={() => setActiveTab(tab.key)}
+                  type="button"
+                  className={`team-glass-tab ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    if (viewMode !== 'grid') {
+                      setViewMode('grid');
+                    }
+                    setActiveTab(tab.key);
+                  }}
+                  title={`${tab.label} (${count})`}
+                  aria-label={`${tab.label} (${count})`}
                 >
-                  {tab.label} <span className="tab-count-badge">{count}</span>
+                  <span className="tab-icon">
+                    {renderDomainIcon(tab.key, isActive)}
+                  </span>
+                  <span className="tab-label">
+                    {tab.label}
+                    <span className="tab-count-badge">{count}</span>
+                  </span>
                 </button>
               );
             })}
           </div>
-        )}
+        </nav>
       </div>
 
       {/* Render selected View Mode content */}
@@ -449,54 +545,186 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           z-index: 10;
         }
 
-        /* View Mode Controls Toolbar */
+        /* Liquid Glass Team Controls Toolbar */
         .team-toolbar-controls {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
           width: 100%;
-          margin-bottom: 32px;
-          gap: 20px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          padding-bottom: 24px;
+          margin-bottom: 36px;
+          position: relative;
+          z-index: 20;
         }
 
-        .view-mode-toggles {
+        .team-glass-bar {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          border-radius: 9999px;
+          padding: 6px 8px;
+          box-sizing: border-box;
+          box-shadow: 
+            0 10px 30px -5px rgba(0, 0, 0, 0.35),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
+          user-select: none;
+          max-width: 100%;
+          transition: border-radius 0.3s ease, padding 0.3s ease;
+        }
+
+        .team-glass-group {
           display: flex;
-          background: rgba(17, 23, 20, 0.4);
-          padding: 5px;
-          border-radius: 10px;
-          border: 1px solid rgba(232, 237, 233, 0.05);
-          backdrop-filter: blur(10px);
+          align-items: center;
+          gap: 4px;
         }
 
-        .toolbar-view-btn {
-          padding: 8px 16px;
-          font-family: 'Inter', sans-serif;
-          font-size: 12.5px;
-          font-weight: 500;
-          color: var(--text-muted);
+        .team-glass-divider {
+          width: 1px;
+          height: 22px;
+          background: rgba(255, 255, 255, 0.22);
+          margin: 0 6px;
+          flex-shrink: 0;
+        }
+
+        .team-glass-tab {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          height: 40px;
+          min-width: 40px;
+          padding: 0 10px;
+          border-radius: 9999px;
+          color: rgba(255, 255, 255, 0.85);
           background: transparent;
           border: none;
-          border-radius: 6px;
           cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative;
+          flex-shrink: 0;
+          text-decoration: none;
+          -webkit-tap-highlight-color: transparent;
+          transition: 
+            background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            color 0.25s ease,
+            padding 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.3s ease,
+            transform 0.2s ease;
         }
 
-        .toolbar-view-btn:hover {
-          color: #e8ede9;
+        .team-glass-tab .tab-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
+          color: currentColor;
+          transition: transform 0.25s ease, color 0.25s ease;
         }
 
-        .toolbar-view-btn.active {
-          color: #080d0b;
+        .team-glass-tab .tab-label {
+          max-width: 0;
+          opacity: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          margin-left: 0;
+          display: inline-flex;
+          align-items: center;
+          transition: 
+            max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 0.22s ease,
+            margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Active tab: Expanding pill state */
+        .team-glass-tab.active {
           background: #ffffff;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+          color: #0b0f17;
+          padding: 0 14px;
+          box-shadow: 
+            0 4px 16px rgba(0, 0, 0, 0.3),
+            0 0 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .team-glass-tab.active .tab-icon {
+          color: #0b0f17;
+          transform: scale(1.04);
+        }
+
+        .team-glass-tab.active .tab-label {
+          max-width: 160px;
+          opacity: 1;
+          margin-left: 7px;
+          color: #0b0f17;
+        }
+
+        .team-glass-tab .tab-count-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          font-weight: 700;
+          margin-left: 6px;
+          padding: 1px 6px;
+          border-radius: 999px;
+          background: rgba(11, 15, 23, 0.12);
+          color: #0b0f17;
+          line-height: 1.2;
+        }
+
+        .team-glass-tab:not(.active):hover {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .team-glass-tab:not(.active):active {
+          transform: scale(0.92);
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.12);
         }
 
         @media (max-width: 768px) {
           .team-toolbar-controls {
+            margin-bottom: 24px;
+            padding: 0 8px;
+          }
+          .team-glass-tab {
+            height: 38px;
+            min-width: 38px;
+            padding: 0 8px;
+          }
+          .team-glass-tab.active {
+            padding: 0 12px;
+          }
+          .team-glass-tab .tab-label {
+            font-size: 12px;
+          }
+        }
+
+        @media (max-width: 620px) {
+          .team-glass-bar {
             flex-direction: column;
-            align-items: center;
+            border-radius: 26px;
+            padding: 6px;
+            gap: 6px;
+            width: auto;
+            max-width: 100%;
+          }
+          .team-glass-divider {
+            width: 80%;
+            height: 1px;
+            margin: 0;
+          }
+          .team-glass-group {
+            width: 100%;
+            justify-content: center;
+            gap: 4px;
           }
         }
 
@@ -657,74 +885,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         }
 
         /* 3. Grid View elements */
-        .team-filter-tabs {
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          background: rgba(17, 23, 20, 0.4);
-          padding: 5px;
-          border-radius: 10px;
-          border: 1px solid rgba(232, 237, 233, 0.05);
-          backdrop-filter: blur(10px);
-          max-width: 100%;
-        }
 
-        @media (max-width: 768px) {
-          .team-filter-tabs {
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 6px;
-            padding: 4px;
-            width: 100%;
-          }
-        }
-
-        .team-tab-btn {
-          padding: 8px 18px;
-          font-size: 12.5px;
-          font-weight: 500;
-          color: var(--text-muted);
-          background: transparent;
-          border: none;
-          border-radius: 6px;
-          text-transform: capitalize;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @media (max-width: 768px) {
-          .team-tab-btn {
-            padding: 6px 12px;
-            font-size: 11.5px;
-          }
-        }
-
-        .team-tab-btn:hover {
-          color: #e8ede9;
-        }
-
-        .team-tab-btn.active {
-          color: #080d0b;
-          background: #ffffff;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .tab-count-badge {
-          display: inline-block;
-          font-size: 10.5px;
-          font-weight: 600;
-          margin-left: 5px;
-          padding: 1px 6px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.1);
-          color: inherit;
-          vertical-align: middle;
-        }
-
-        .team-tab-btn.active .tab-count-badge {
-          background: rgba(8, 13, 11, 0.15);
-          color: #080d0b;
-        }
 
         /* Team Showcase Layouts */
         .team-showcase-container {
