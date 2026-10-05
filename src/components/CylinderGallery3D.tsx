@@ -643,11 +643,6 @@ export default function CylinderGallery3D() {
       {/* Center 3D Text & Controls */}
       <div className="cyl-center-overlay">
         <div ref={text3DRef} className="cyl-3d-text-wrap">
-          <div className="cyl-top-pill">
-            <span className="cyl-blue-dot" />
-            <span>Developer Students Club Presents</span>
-          </div>
-
           <h1 className="cyl-3d-headline">
             <div className="cyl-headline-row">Developer</div>
             <div className="cyl-headline-row">
