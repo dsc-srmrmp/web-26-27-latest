@@ -620,8 +620,8 @@ export default function CylinderGallery3D() {
               perspective={950}
               autoOrbit
               orbitSpeed={0.35}
-              fontSize="clamp(3.2rem, 8.8vw, 6.8rem)"
-              fontWeight={900}
+              fontSize="clamp(3.4rem, 9.6vw, 7.4rem)"
+              fontWeight={400}
               fontFamily="'Bebas Neue', sans-serif"
               letterSpacing="0.025em"
               shadow
