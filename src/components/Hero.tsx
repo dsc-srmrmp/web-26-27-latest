@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Header from './Header';
@@ -81,9 +81,20 @@ export default function Hero() {
   const carouselRef = useRef<FlexCarouselHandle | null>(null);
   const scrollDownRef = useRef<HTMLAnchorElement | null>(null);
 
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Subtle interactive mouse tilt isolated to mouseTiltRef to avoid colliding with scroll tweens
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!mouseTiltRef.current) return;
+    if (!mouseTiltRef.current || window.innerWidth < 768) return;
     const { innerWidth, innerHeight } = window;
     const xRatio = (e.clientX / innerWidth - 0.5) * 2;
     const yRatio = (e.clientY / innerHeight - 0.5) * 2;
@@ -120,9 +131,9 @@ export default function Hero() {
             end: '85% top',
             scrub: 0.5,
           },
-          y: -200,
+          y: isMobile ? -140 : -220,
           rotateX: 14,
-          scale: 0.88,
+          scale: 0.86,
           opacity: 0,
           filter: 'blur(14px)',
           ease: 'power1.out',
@@ -154,8 +165,8 @@ export default function Hero() {
             end: 'bottom top',
             scrub: 0.6,
           },
-          y: 110,
-          scale: 1.06,
+          y: isMobile ? 60 : 110,
+          scale: 1.05,
           ease: 'none',
         });
       }
@@ -171,8 +182,8 @@ export default function Hero() {
           const deltaProgress = self.progress - lastProgress;
           lastProgress = self.progress;
 
-          const scrollDelta = deltaProgress * 480;
-          const velocityDelta = self.getVelocity() * 0.045;
+          const scrollDelta = deltaProgress * (isMobile ? 360 : 480);
+          const velocityDelta = self.getVelocity() * (isMobile ? 0.035 : 0.045);
           const totalDelta = scrollDelta + velocityDelta;
 
           if (Math.abs(totalDelta) > 0.3) {
@@ -198,7 +209,7 @@ export default function Hero() {
     }, container);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile]);
 
   return (
     <div id="home" ref={heroContainerRef} className="hero-master-wrapper">
@@ -248,7 +259,7 @@ export default function Hero() {
           width: 100%;
           height: 100vh;
           height: 100dvh;
-          min-height: 680px;
+          min-height: 640px;
           background: #000000;
           color: #fff;
           font-family: 'Inter', sans-serif;
@@ -261,8 +272,8 @@ export default function Hero() {
           pointer-events: none;
           z-index: 0;
           background:
-            radial-gradient(circle 650px at 50% 32%, rgba(66, 133, 244, 0.08) 0%, transparent 70%),
-            radial-gradient(circle 520px at 50% 64%, rgba(234, 67, 53, 0.06) 0%, transparent 68%);
+            radial-gradient(circle 850px at 50% 32%, rgba(66, 133, 244, 0.12) 0%, transparent 70%),
+            radial-gradient(circle 650px at 50% 64%, rgba(234, 67, 53, 0.09) 0%, transparent 68%);
         }
 
         /* Full Hero Liquid Gallery Stage */
@@ -286,7 +297,7 @@ export default function Hero() {
           justify-content: center;
           z-index: 10;
           pointer-events: none;
-          padding: 0 20px;
+          padding: 0 24px;
         }
 
         /* Mouse Tilt Layer (Handles Cursor Parallax without colliding with Scroll) */
@@ -307,18 +318,18 @@ export default function Hero() {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: min(840px, 92vw);
-          height: min(420px, 52vh);
-          background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.38) 50%, transparent 100%);
+          width: min(1120px, 94vw);
+          height: min(540px, 60vh);
+          background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.44) 55%, transparent 100%);
           pointer-events: none;
           z-index: -1;
-          filter: blur(16px);
+          filter: blur(20px);
         }
 
         /* DEVELOPER STUDENTS CLUB Parallax Box */
         .hero-title-parallax-box {
           transform-style: preserve-3d;
-          perspective: 1100px;
+          perspective: 1200px;
           will-change: transform, opacity, filter;
         }
 
@@ -339,21 +350,21 @@ export default function Hero() {
 
         .hero-subtitle {
           font-family: 'Inter', sans-serif;
-          font-size: clamp(0.95rem, 1.8vw, 1.25rem);
-          font-weight: 400;
-          color: rgba(255, 255, 255, 0.85);
-          margin-top: 18px;
+          font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.9);
+          margin-top: 22px;
           margin-bottom: 0;
           letter-spacing: -0.01em;
-          text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
+          text-shadow: 0 2px 18px rgba(0, 0, 0, 0.98);
         }
 
         .hero-btn-row {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 14px;
-          margin-top: 24px;
+          gap: 16px;
+          margin-top: 28px;
           flex-wrap: wrap;
         }
 
@@ -364,25 +375,25 @@ export default function Hero() {
           justify-content: center;
           padding: 1px;
           border-radius: 9999px;
-          background: linear-gradient(135deg, rgba(66, 133, 244, 0.5), rgba(234, 67, 53, 0.4), rgba(251, 188, 4, 0.4), rgba(52, 168, 83, 0.5));
+          background: linear-gradient(135deg, rgba(66, 133, 244, 0.6), rgba(234, 67, 53, 0.5), rgba(251, 188, 4, 0.5), rgba(52, 168, 83, 0.6));
           text-decoration: none;
           transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
           cursor: pointer;
         }
 
         .hero-pill-btn:hover {
-          transform: translateY(-2.5px) scale(1.035);
-          box-shadow: 0 0 26px rgba(66, 133, 244, 0.45);
+          transform: translateY(-3px) scale(1.04);
+          box-shadow: 0 0 30px rgba(66, 133, 244, 0.55);
         }
 
         .hero-pill-btn-inner {
-          padding: 10px 24px;
+          padding: 12px 28px;
           border-radius: 9999px;
-          background: rgba(10, 10, 12, 0.88);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
+          background: rgba(10, 10, 14, 0.88);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
           font-family: 'Inter', sans-serif;
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 500;
           color: #ffffff;
           white-space: nowrap;
@@ -394,7 +405,7 @@ export default function Hero() {
 
         .hero-scroll-down {
           position: absolute;
-          bottom: 22px;
+          bottom: 24px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 20;
@@ -427,14 +438,39 @@ export default function Hero() {
           50% { transform: translateY(6px); }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
+          .hero-ambient-spot {
+            background:
+              radial-gradient(circle 380px at 50% 36%, rgba(66, 133, 244, 0.18) 0%, transparent 70%),
+              radial-gradient(circle 300px at 50% 54%, rgba(234, 67, 53, 0.14) 0%, transparent 68%);
+          }
+          .hero-center-overlay {
+            padding-top: 48px;
+            padding-left: 12px;
+            padding-right: 12px;
+          }
+          .hero-center-backdrop {
+            width: min(380px, 96vw);
+            height: min(420px, 54vh);
+            background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.42) 58%, transparent 100%);
+          }
+          .hero-subtitle {
+            font-size: clamp(0.92rem, 3.8vw, 1.15rem);
+            margin-top: 16px;
+          }
           .hero-btn-row {
-            gap: 8px;
-            margin-top: 18px;
+            gap: 10px;
+            margin-top: 20px;
+            max-width: 360px;
           }
           .hero-pill-btn-inner {
-            padding: 8.5px 18px;
+            padding: 9.5px 18px;
             font-size: 12px;
+          }
+          .hero-scroll-down {
+            bottom: 14px;
+            width: 38px;
+            height: 38px;
           }
         }
       `}</style>
@@ -463,7 +499,7 @@ export default function Hero() {
       {/* Primary Site Navigation */}
       <Header active="home" />
 
-      {/* Full-bleed Liquid WebGL Gallery Stage (Captions removed) */}
+      {/* Full-bleed Liquid WebGL Gallery Stage (Responsive mobile & desktop calibration) */}
       <div ref={galleryStageRef} className="hero-gallery-stage">
         <FlexCarousel
           ref={carouselRef}
@@ -471,10 +507,15 @@ export default function Hero() {
           preset="liquid"
           intro="rise"
           fit="natural"
-          cardHeight={0.46}
-          gap={14}
+          cardHeight={isMobile ? 0.42 : 0.50}
+          tilt={isMobile ? 24 : 54}
+          lensWidth={isMobile ? 0.84 : 0.76}
+          lensHeight={isMobile ? 0.98 : 1.15}
+          bend={isMobile ? 0.28 : 0.34}
+          reach={isMobile ? 0.34 : 0.38}
+          gap={isMobile ? 12 : 16}
           radius={16}
-          squeeze={0.2}
+          squeeze={isMobile ? 0.12 : 0.2}
           focusOnClick={true}
           captions={false}
           autoplay={true}
@@ -488,7 +529,7 @@ export default function Hero() {
         <div ref={mouseTiltRef} className="hero-mouse-tilt-layer">
           <div className="hero-center-backdrop" />
 
-          {/* DEVELOPER STUDENTS CLUB with rich 3D perspective parallax scroll transition */}
+          {/* DEVELOPER STUDENTS CLUB with colossal font size and rich 3D perspective parallax scroll transition */}
           <div ref={titleParallaxRef} className="hero-title-parallax-box">
             <h1 className="hero-depth-title" aria-label="Developer Students Club">
               <DepthText
@@ -499,20 +540,20 @@ export default function Hero() {
                     { text: 'CLUB', faceColor: '#ea4335', depthColor: '#701313' },
                   ],
                 ]}
-                layers={34}
-                depth={2.4}
+                layers={isMobile ? 28 : 42}
+                depth={isMobile ? 2.0 : 2.8}
                 faceColor="#ffffff"
                 depthColor="#262d3a"
-                tilt={7.5}
+                tilt={isMobile ? 5 : 7.5}
                 pointerTracking
                 smoothing={0.14}
-                perspective={950}
+                perspective={isMobile ? 850 : 1050}
                 autoOrbit
                 orbitSpeed={0.35}
-                fontSize="clamp(3.4rem, 9.6vw, 7.2rem)"
+                fontSize={isMobile ? 'clamp(3.3rem, 14.5vw, 5.2rem)' : 'clamp(5rem, 13.5vw, 11rem)'}
                 fontWeight={400}
                 fontFamily="'Bebas Neue', sans-serif"
-                letterSpacing="0.025em"
+                letterSpacing={isMobile ? '0.015em' : '0.025em'}
                 shadow
               />
             </h1>
