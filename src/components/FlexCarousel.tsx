@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 // @ts-ignore
 import { Renderer, Program, Mesh, Triangle, Plane, Texture, RenderTarget } from 'ogl';
 
@@ -9,6 +9,14 @@ export interface FlexCarouselItem {
   alt?: string;
   title?: string;
   subtitle?: string;
+}
+
+export interface FlexCarouselHandle {
+  wake: () => void;
+  setItems: (items: FlexCarouselItem[]) => void;
+  scrollBy: (delta: number) => void;
+  step: (delta: number) => void;
+  goTo: (index: number) => void;
 }
 
 export interface FlexCarouselProps {
@@ -292,35 +300,38 @@ const Digits = ({ value }: { value: number }) => (
   </span>
 );
 
-export default function FlexCarousel({
-  items = DEFAULT_ITEMS,
-  preset = 'liquid',
-  intro = 'rise',
-  cardHeight = 0.5,
-  gap = 12,
-  radius = 0,
-  fit = 'natural',
-  lensWidth,
-  lensHeight,
-  tilt,
-  roundness,
-  bend,
-  reach,
-  curl,
-  dispersion,
-  liquid,
-  followCursor,
-  squeeze = 0.2,
-  focusOnClick = true,
-  autoplay = false,
-  interval = 4,
-  captions = true,
-  captureWheel = true,
-  onChange,
-  onSelect,
-  className = '',
-  style,
-}: FlexCarouselProps) {
+const FlexCarousel = forwardRef<FlexCarouselHandle, FlexCarouselProps>(function FlexCarousel(
+  {
+    items = DEFAULT_ITEMS,
+    preset = 'liquid',
+    intro = 'rise',
+    cardHeight = 0.5,
+    gap = 12,
+    radius = 0,
+    fit = 'natural',
+    lensWidth,
+    lensHeight,
+    tilt,
+    roundness,
+    bend,
+    reach,
+    curl,
+    dispersion,
+    liquid,
+    followCursor,
+    squeeze = 0.2,
+    focusOnClick = true,
+    autoplay = false,
+    interval = 4,
+    captions = true,
+    captureWheel = true,
+    onChange,
+    onSelect,
+    className = '',
+    style,
+  }: FlexCarouselProps,
+  ref
+) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const settingsRef = useRef<any>(null);
   const itemsRef = useRef<FlexCarouselItem[]>(items);
@@ -329,6 +340,18 @@ export default function FlexCarousel({
   const [active, setActive] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [focusOpen, setFocusOpen] = useState(false);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      wake: () => engineRef.current?.wake(),
+      setItems: (nextItems: FlexCarouselItem[]) => engineRef.current?.setItems(nextItems),
+      scrollBy: (delta: number) => engineRef.current?.scrollBy(delta),
+      step: (delta: number) => engineRef.current?.step(delta),
+      goTo: (index: number) => engineRef.current?.goTo(index),
+    }),
+    []
+  );
 
   const base = BEND_PRESETS[preset] || BEND_PRESETS.liquid;
   const pick = (value: any, key: string) => (value === undefined || value === null ? base[key] : value);
@@ -1242,6 +1265,22 @@ export default function FlexCarousel({
         start();
       },
       setItems,
+      scrollBy: (delta: number) => {
+        goal += delta;
+        mode = 'spring';
+        dirty = true;
+        start();
+      },
+      step: (delta: number) => {
+        const s = settingsRef.current;
+        if (!s) return;
+        step(metrics(s), delta);
+      },
+      goTo: (index: number) => {
+        const s = settingsRef.current;
+        if (!s) return;
+        goTo(metrics(s), index);
+      },
     };
 
     resize();
@@ -1302,4 +1341,6 @@ export default function FlexCarousel({
       </div>
     </div>
   );
-}
+});
+
+export default FlexCarousel;

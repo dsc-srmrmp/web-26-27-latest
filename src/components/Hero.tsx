@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Header from './Header';
 import DepthText from './DepthText';
-import FlexCarousel, { type FlexCarouselItem } from './FlexCarousel';
+import FlexCarousel, { type FlexCarouselItem, type FlexCarouselHandle } from './FlexCarousel';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const HERO_GALLERY_ITEMS: FlexCarouselItem[] = [
   {
@@ -67,8 +73,97 @@ const HERO_GALLERY_ITEMS: FlexCarouselItem[] = [
 ];
 
 export default function Hero() {
+  const heroContainerRef = useRef<HTMLDivElement | null>(null);
+  const textWrapRef = useRef<HTMLDivElement | null>(null);
+  const galleryStageRef = useRef<HTMLDivElement | null>(null);
+  const carouselRef = useRef<FlexCarouselHandle | null>(null);
+
+  // Subtle interactive mouse tilt for floating text centerpiece
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!textWrapRef.current) return;
+    const { innerWidth, innerHeight } = window;
+    const xRatio = (e.clientX / innerWidth - 0.5) * 2;
+    const yRatio = (e.clientY / innerHeight - 0.5) * 2;
+
+    gsap.to(textWrapRef.current, {
+      x: xRatio * 12,
+      y: -34 + yRatio * 8,
+      duration: 0.6,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [handleMouseMove]);
+
+  // Integrated Scroll Parallax for Text Centerpiece & Liquid WebGL Gallery
+  useEffect(() => {
+    const container = heroContainerRef.current;
+    if (!container) return;
+
+    const ctx = gsap.context(() => {
+      // 1. Hero text parallax departure (elevates, fades & blurs upward)
+      if (textWrapRef.current) {
+        gsap.to(textWrapRef.current, {
+          scrollTrigger: {
+            trigger: container,
+            start: 'top top',
+            end: '65% top',
+            scrub: 0.35,
+          },
+          y: -170,
+          opacity: 0,
+          scale: 0.9,
+          filter: 'blur(10px)',
+          ease: 'power1.out',
+        });
+      }
+
+      // 2. Background liquid gallery stage parallax depth (slower counter-movement)
+      if (galleryStageRef.current) {
+        gsap.to(galleryStageRef.current, {
+          scrollTrigger: {
+            trigger: container,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.5,
+          },
+          y: 90,
+          scale: 1.05,
+          ease: 'none',
+        });
+      }
+
+      // 3. Drive carousel horizontal rotation dynamically on page scroll
+      let lastProgress = 0;
+      ScrollTrigger.create({
+        trigger: container,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 0.2,
+        onUpdate: (self) => {
+          const deltaProgress = self.progress - lastProgress;
+          lastProgress = self.progress;
+
+          const scrollDelta = deltaProgress * 420;
+          const velocityDelta = self.getVelocity() * 0.04;
+          const totalDelta = scrollDelta + velocityDelta;
+
+          if (Math.abs(totalDelta) > 0.4) {
+            carouselRef.current?.scrollBy(totalDelta);
+          }
+        },
+      });
+    }, container);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div id="home" className="hero-master-wrapper">
+    <div id="home" ref={heroContainerRef} className="hero-master-wrapper">
       <style>{`
         @keyframes dsc-marquee {
           0% { transform: translateX(0); }
@@ -113,12 +208,12 @@ export default function Hero() {
         .hero-master-wrapper {
           position: relative;
           width: 100%;
-          min-height: 100vh;
+          height: 100vh;
+          height: 100dvh;
+          min-height: 680px;
           background: #000000;
           color: #fff;
           font-family: 'Inter', sans-serif;
-          display: flex;
-          flex-direction: column;
           overflow: hidden;
         }
 
@@ -132,25 +227,55 @@ export default function Hero() {
             radial-gradient(circle 520px at 50% 64%, rgba(234, 67, 53, 0.06) 0%, transparent 68%);
         }
 
-        .hero-body {
-          position: relative;
-          z-index: 2;
+        /* Full Hero Liquid Gallery Stage */
+        .hero-gallery-stage {
+          position: absolute;
+          inset: 0;
           width: 100%;
+          height: 100%;
+          z-index: 2;
+          pointer-events: auto;
+          will-change: transform;
+        }
+
+        /* Foreground Centerpiece Overlay sitting directly OVER the gallery */
+        .hero-center-overlay {
+          position: absolute;
+          inset: 0;
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding-top: 108px;
-          padding-bottom: 24px;
+          justify-content: center;
+          z-index: 10;
+          pointer-events: none;
+          padding: 0 20px;
         }
 
-        .hero-centerpiece {
+        /* 3D Extruded Center Text Wrap */
+        .hero-3d-text-wrap {
+          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
-          padding: 16px 20px 0;
-          max-width: 1200px;
-          margin: 0 auto;
+          transform: translateY(-34px);
+          transform-style: preserve-3d;
+          will-change: transform, opacity, filter;
+          pointer-events: auto;
+        }
+
+        /* Soft ambient radial backdrop to ensure maximum contrast and legibility over photos */
+        .hero-center-backdrop {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: min(840px, 92vw);
+          height: min(420px, 52vh);
+          background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.38) 50%, transparent 100%);
+          pointer-events: none;
+          z-index: -1;
+          filter: blur(16px);
         }
 
         .hero-depth-title {
@@ -164,11 +289,11 @@ export default function Hero() {
           font-family: 'Inter', sans-serif;
           font-size: clamp(0.95rem, 1.8vw, 1.25rem);
           font-weight: 400;
-          color: rgba(255, 255, 255, 0.75);
-          margin-top: 18px;
+          color: rgba(255, 255, 255, 0.85);
+          margin-top: 16px;
           margin-bottom: 0;
           letter-spacing: -0.01em;
-          text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+          text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
         }
 
         .hero-btn-row {
@@ -176,8 +301,7 @@ export default function Hero() {
           align-items: center;
           justify-content: center;
           gap: 14px;
-          margin-top: 26px;
-          margin-bottom: 24px;
+          margin-top: 22px;
           flex-wrap: wrap;
         }
 
@@ -200,7 +324,7 @@ export default function Hero() {
         }
 
         .hero-pill-btn-inner {
-          padding: 11px 26px;
+          padding: 10px 24px;
           border-radius: 9999px;
           background: rgba(10, 10, 12, 0.88);
           backdrop-filter: blur(14px);
@@ -216,14 +340,13 @@ export default function Hero() {
           gap: 6px;
         }
 
-        .hero-carousel-stage {
-          position: relative;
-          width: 100%;
-          height: clamp(380px, 46vh, 520px);
-          margin-top: 4px;
-        }
-
         .hero-scroll-down {
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 20;
+          pointer-events: auto;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -238,14 +361,13 @@ export default function Hero() {
           text-decoration: none;
           transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
           animation: hero-bounce 2s ease-in-out infinite;
-          margin-top: 14px;
         }
 
         .hero-scroll-down:hover {
           background: rgba(255, 255, 255, 0.12);
           border-color: rgba(255, 255, 255, 0.35);
           color: #ffffff;
-          transform: translateY(3px);
+          transform: translateX(-50%) translateY(3px);
         }
 
         @keyframes hero-bounce {
@@ -254,20 +376,16 @@ export default function Hero() {
         }
 
         @media (max-width: 640px) {
-          .hero-body {
-            padding-top: 96px;
+          .hero-3d-text-wrap {
+            transform: translateY(-20px);
           }
           .hero-btn-row {
             gap: 8px;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin-top: 18px;
           }
           .hero-pill-btn-inner {
             padding: 8.5px 18px;
             font-size: 12px;
-          }
-          .hero-carousel-stage {
-            height: 360px;
           }
         }
       `}</style>
@@ -296,10 +414,31 @@ export default function Hero() {
       {/* Primary Site Navigation */}
       <Header active="home" />
 
-      {/* Hero Body Content */}
-      <div className="hero-body">
-        {/* Centerpiece 3D DepthText */}
-        <div className="hero-centerpiece">
+      {/* Full-bleed Liquid WebGL Gallery Stage */}
+      <div ref={galleryStageRef} className="hero-gallery-stage">
+        <FlexCarousel
+          ref={carouselRef}
+          items={HERO_GALLERY_ITEMS}
+          preset="liquid"
+          intro="rise"
+          fit="natural"
+          cardHeight={0.44}
+          gap={14}
+          radius={16}
+          squeeze={0.2}
+          focusOnClick={true}
+          captions={true}
+          autoplay={true}
+          interval={3.8}
+          captureWheel={false}
+        />
+      </div>
+
+      {/* Foreground Centerpiece Overlay Layered Directly OVER Gallery */}
+      <div className="hero-center-overlay">
+        <div ref={textWrapRef} className="hero-3d-text-wrap">
+          <div className="hero-center-backdrop" />
+
           <h1 className="hero-depth-title" aria-label="Developer Students Club">
             <DepthText
               lines={[
@@ -341,42 +480,23 @@ export default function Hero() {
             </a>
           </div>
         </div>
-
-        {/* Liquid Refraction FlexCarousel */}
-        <div className="hero-carousel-stage">
-          <FlexCarousel
-            items={HERO_GALLERY_ITEMS}
-            preset="liquid"
-            intro="rise"
-            fit="natural"
-            cardHeight={0.52}
-            gap={14}
-            radius={14}
-            squeeze={0.2}
-            focusOnClick={true}
-            captions={true}
-            autoplay={true}
-            interval={3.8}
-            captureWheel={false}
-          />
-        </div>
-
-        {/* Down Chevron Indicator */}
-        <a href="#about" className="hero-scroll-down" aria-label="Scroll down to explore">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </a>
       </div>
+
+      {/* Down Chevron Indicator */}
+      <a href="#about" className="hero-scroll-down" aria-label="Scroll down to explore">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </a>
     </div>
   );
 }
