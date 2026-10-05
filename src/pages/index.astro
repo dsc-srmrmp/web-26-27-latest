@@ -15,21 +15,17 @@ import valueLabsLogo from '../../assets/Alumnus company/value labs.png';
 import deccanLogo from '../../assets/Alumnus company/deccan.png';
 import jpMorganLogo from '../../assets/Alumnus company/jp morgan.png';
 
-import ScrollStorySection from '../components/ScrollStorySection.tsx';
 import MemberTestimonials from '../components/MemberTestimonials.tsx';
 import JoinCommunitySection from '../components/JoinCommunitySection.tsx';
 ---
 
 
 <BaseLayout>
-  <!-- Hero Component (React Island with Three.js & GSAP) -->
+  <!-- Hero Component with 3D Cylindrical Photo Amphitheater & 3D Extruded Centerpiece -->
   <Hero client:load />
 
-  <!-- Section 1: Interactive Scroll Story — reveals club identity chapter by chapter -->
-  <ScrollStorySection client:load />
-
   <!-- ========== CREATIVE AI SECTION ========== -->
-  <section class="creative-ai-section">
+  <section class="creative-ai-section" id="about">
     <div class="ca-grid">
       <!-- Row 1: Header spanning 2 cols + 3 empty -->
       <div class="ca-cell ca-white-block ca-span-2 ca-left-0">
