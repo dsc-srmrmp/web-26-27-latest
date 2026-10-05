@@ -4,6 +4,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Header from './Header';
 import DepthText from './DepthText';
 import FlexCarousel, { type FlexCarouselItem, type FlexCarouselHandle } from './FlexCarousel';
+import SideRays from './SideRays';
+import TechParticles from './TechParticles';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -258,7 +260,7 @@ export default function Hero() {
           height: 100vh;
           height: 100dvh;
           min-height: 640px;
-          background: #000000;
+          background: linear-gradient(to bottom, #080d0b 0%, #051310 50%, #030d0f 100%) no-repeat;
           color: #fff;
           font-family: 'Inter', sans-serif;
           overflow: hidden;
@@ -270,8 +272,36 @@ export default function Hero() {
           pointer-events: none;
           z-index: 0;
           background:
-            radial-gradient(circle 850px at 50% 32%, rgba(66, 133, 244, 0.12) 0%, transparent 70%),
-            radial-gradient(circle 650px at 50% 64%, rgba(234, 67, 53, 0.09) 0%, transparent 68%);
+            radial-gradient(circle 900px at 80% 20%, rgba(29, 209, 161, 0.15) 0%, transparent 70%),
+            radial-gradient(circle 750px at 20% 75%, rgba(0, 242, 254, 0.09) 0%, transparent 65%),
+            radial-gradient(circle 600px at 50% 45%, rgba(26, 92, 69, 0.22) 0%, transparent 75%);
+        }
+
+        .hero-side-rays {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 1;
+          opacity: 0.65;
+          overflow: hidden;
+        }
+
+        /* Decorative Corner Circuit Graphics (Consistent with About & Contact) */
+        .hero-corner-graphic {
+          position: absolute;
+          pointer-events: none;
+          opacity: 0.22;
+          z-index: 1;
+        }
+        .hero-corner-top-left {
+          top: 48px;
+          left: 20px;
+        }
+        .hero-corner-top-right {
+          top: 48px;
+          right: 20px;
         }
 
         /* Full Hero Liquid Gallery Stage */
@@ -480,6 +510,41 @@ export default function Hero() {
 
       {/* Ambient background glow */}
       <div className="hero-ambient-spot" />
+
+      {/* WebGL Volumetric SideRays (Consistent with About & Contact) */}
+      <div className="hero-side-rays">
+        <SideRays
+          speed={1.2}
+          rayColor1="#1dd1a1"
+          rayColor2="#00f2fe"
+          intensity={1.2}
+          spread={2.5}
+          origin="top-right"
+          tilt={0}
+          saturation={1.5}
+          blend={0.75}
+          falloff={1.6}
+          opacity={0.65}
+        />
+      </div>
+
+      {/* Ambient Tech Particles (Consistent with About & Contact) */}
+      <TechParticles />
+
+      {/* Decorative Corner Circuit Graphics (Consistent with About & Contact) */}
+      <svg className="hero-corner-graphic hero-corner-top-left" width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,50 L100,50 L150,100 L220,100" stroke="rgba(232, 237, 233, 0.4)" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M60,0 L60,80 L100,120 L150,120" stroke="rgba(232, 237, 233, 0.25)" strokeWidth="1" strokeLinecap="round" />
+        <circle cx="220" cy="100" r="3" fill="#1dd1a1" />
+        <circle cx="150" cy="120" r="2" fill="rgba(232, 237, 233, 0.6)" />
+      </svg>
+
+      <svg className="hero-corner-graphic hero-corner-top-right" width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M250,50 L150,50 L100,100 L30,100" stroke="rgba(232, 237, 233, 0.4)" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M190,0 L190,80 L150,120 L100,120" stroke="rgba(232, 237, 233, 0.25)" strokeWidth="1" strokeLinecap="round" />
+        <circle cx="30" cy="100" r="3" fill="#1dd1a1" />
+        <circle cx="100" cy="120" r="2" fill="rgba(232, 237, 233, 0.6)" />
+      </svg>
 
       {/* Top Announcements Marquee */}
       <div className="dsc-marquee-container">

@@ -333,7 +333,8 @@ body::-webkit-scrollbar {
 
 body {
   font-family: var(--font-primary);
-  background-color: var(--bg-primary);
+  background: linear-gradient(to bottom, #080d0b 0%, #051310 50%, #030d0f 100%) no-repeat;
+  background-color: #080d0b;
   color: var(--text-muted);
   line-height: 1.6;
   overflow-x: clip;
