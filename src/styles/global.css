@@ -2276,7 +2276,7 @@ a.home-join-btn:hover {
    ============================================================ */
 .mobile-glass-nav {
   position: fixed;
-  top: max(38px, calc(env(safe-area-inset-top, 0px) + 38px));
+  top: max(48px, calc(env(safe-area-inset-top, 0px) + 46px));
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 24px);
