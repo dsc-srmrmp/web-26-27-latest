@@ -15,18 +15,71 @@ import valueLabsLogo from '../../assets/Alumnus company/value labs.png';
 import deccanLogo from '../../assets/Alumnus company/deccan.png';
 import jpMorganLogo from '../../assets/Alumnus company/jp morgan.png';
 
-
+import ScrollStorySection from '../components/ScrollStorySection.tsx';
 import MemberTestimonials from '../components/MemberTestimonials.tsx';
-import ParallaxActivitiesDeck from '../components/ParallaxActivitiesDeck.tsx';
 import JoinCommunitySection from '../components/JoinCommunitySection.tsx';
 ---
+
 
 <BaseLayout>
   <!-- Hero Component (React Island with Three.js & GSAP) -->
   <Hero client:load />
 
-  <!-- Section 1: What We Do (Parallax Activities Deck with DSA Lead) -->
-  <ParallaxActivitiesDeck client:load />
+  <!-- Section 1: Interactive Scroll Story — reveals club identity chapter by chapter -->
+  <ScrollStorySection client:load />
+
+  <!-- ========== CREATIVE AI SECTION ========== -->
+  <section class="creative-ai-section">
+    <div class="ca-grid">
+      <!-- Row 1: Header spanning 2 cols + 3 empty -->
+      <div class="ca-cell ca-white-block ca-span-2 ca-left-0">
+        <h2 class="ca-heading">Fostering developer innovation</h2>
+        <p class="ca-text">Developer Students Club, SRM IST Ramapuram provides a collaborative space for students to learn, build, and grow together, bridging the gap between theory and practice.</p>
+      </div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+
+      <!-- Row 2 -->
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-white-block ca-center-1">
+        <h3 class="ca-subheading">Hands-on learning &amp; workshops</h3>
+        <p class="ca-text">Master modern frameworks, tools, and platforms through peer-led study groups and interactive tech workshops.</p>
+      </div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+
+      <!-- Row 3 -->
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-white-block ca-right-1">
+        <h3 class="ca-subheading">Real-world project development</h3>
+        <p class="ca-text">Apply theoretical concepts to solve real local problems, collaborate in teams, and build impactful open-source projects.</p>
+      </div>
+
+      <!-- Row 4 -->
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-empty"></div>
+      <div class="ca-cell ca-white-block ca-center-2">
+        <h3 class="ca-subheading">Global network &amp; mentorship</h3>
+        <p class="ca-text">Connect with developers worldwide, learn from industry experts, and prepare for a career in the tech industry.</p>
+      </div>
+      <div class="ca-cell ca-empty"></div>
+    </div>
+  </section>
+
+  <!-- ========== PARTNERSHIP SECTION ========== -->
+  <section class="partnership-section">
+    <div class="partnership-content reveal">
+      <h2 class="partnership-heading">Backed by Google Developers</h2>
+      <p class="partnership-subheading">We are a university-based community group for students. Join our chapter to learn, connect, and build tech solutions for local businesses and your community.</p>
+      <a href="#" class="btn-partnership">Join Our Chapter</a>
+    </div>
+  </section>
 
   <!-- ========== MEMBER TESTIMONIALS SECTION ========== -->
   <MemberTestimonials client:visible />
