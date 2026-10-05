@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import DepthText from './DepthText';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -218,14 +219,10 @@ export default function CylinderGallery3D() {
 
     if (text3DRef.current) {
       gsap.to(text3DRef.current, {
-        rotationY: xRatio * 8,
-        rotationX: -yRatio * 7,
-        x: xRatio * 15,
-        y: yRatio * 10,
+        x: xRatio * 12,
+        y: yRatio * 8,
         duration: 0.6,
         ease: 'power2.out',
-        transformPerspective: 1000,
-        transformOrigin: 'center center',
       });
     }
   }, []);
@@ -456,51 +453,30 @@ export default function CylinderGallery3D() {
           box-shadow: 0 0 10px #4285f4;
         }
 
-        /* The 3D Headline */
-        .cyl-3d-headline {
-          font-family: 'Google Sans', 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-          font-weight: 900;
-          font-size: clamp(3.2rem, 7.8vw, 7.5rem);
-          line-height: 0.94;
-          letter-spacing: -0.04em;
-          text-transform: uppercase;
-          color: #ffffff;
+        /* 3D Extruded DepthText Heading */
+        .cyl-depth-title {
           margin: 0;
+          padding: 0;
+          font-size: 0;
+          line-height: 1;
+        }
+
+        .cyl-depth-group {
           display: flex;
           flex-direction: column;
           align-items: center;
-          text-shadow:
-            0 1px 0 #d9d9d9,
-            0 2px 0 #c7c7c7,
-            0 3px 0 #b4b4b4,
-            0 4px 0 #a2a2a2,
-            0 5px 0 #909090,
-            0 6px 0 #7e7e7e,
-            0 7px 0 #6c6c6c,
-            0 8px 1px rgba(0, 0, 0, 0.3),
-            0 12px 28px rgba(0, 0, 0, 0.95);
+          justify-content: center;
+          gap: 2px;
+          transform-style: preserve-3d;
         }
 
-        .cyl-headline-row {
+        .depth-row {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 12px;
-        }
-
-        /* Red 3D Extrusion Accent */
-        .cyl-3d-red {
-          color: #ea4335;
-          text-shadow:
-            0 1px 0 #d9382b,
-            0 2px 0 #be2f23,
-            0 3px 0 #a3271c,
-            0 4px 0 #881e15,
-            0 5px 0 #6e160e,
-            0 6px 0 #530e08,
-            0 7px 0 #390703,
-            0 8px 1px rgba(0, 0, 0, 0.35),
-            0 14px 30px rgba(234, 67, 53, 0.45);
+          gap: clamp(8px, 1.8vw, 18px);
+          transform-style: preserve-3d;
+          line-height: 0.88;
         }
 
         /* Subtitle */
@@ -643,11 +619,66 @@ export default function CylinderGallery3D() {
       {/* Center 3D Text & Controls */}
       <div className="cyl-center-overlay">
         <div ref={text3DRef} className="cyl-3d-text-wrap">
-          <h1 className="cyl-3d-headline">
-            <div className="cyl-headline-row">Developer</div>
-            <div className="cyl-headline-row">
-              <span>Students</span>
-              <span className="cyl-3d-red">Club</span>
+          <h1 className="cyl-depth-title" aria-label="Developer Students Club">
+            <div className="depth-text-group cyl-depth-group">
+              <div className="depth-row">
+                <DepthText
+                  text="DEVELOPER"
+                  layers={34}
+                  depth={2.4}
+                  faceColor="#ffffff"
+                  depthColor="#262d3a"
+                  tilt={7.5}
+                  pointerTracking
+                  smoothing={0.14}
+                  perspective={900}
+                  autoOrbit
+                  orbitSpeed={0.35}
+                  fontSize="clamp(2.5rem, 6.8vw, 5.8rem)"
+                  fontWeight={900}
+                  fontFamily="'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+                  letterSpacing="-0.035em"
+                  shadow
+                />
+              </div>
+              <div className="depth-row">
+                <DepthText
+                  text="STUDENTS"
+                  layers={34}
+                  depth={2.4}
+                  faceColor="#ffffff"
+                  depthColor="#262d3a"
+                  tilt={7.5}
+                  pointerTracking
+                  smoothing={0.14}
+                  perspective={900}
+                  autoOrbit
+                  orbitSpeed={0.35}
+                  fontSize="clamp(2.5rem, 6.8vw, 5.8rem)"
+                  fontWeight={900}
+                  fontFamily="'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+                  letterSpacing="-0.035em"
+                  shadow
+                />
+                <DepthText
+                  text="CLUB"
+                  layers={36}
+                  depth={2.6}
+                  faceColor="#ea4335"
+                  depthColor="#701313"
+                  tilt={7.5}
+                  pointerTracking
+                  smoothing={0.14}
+                  perspective={900}
+                  autoOrbit
+                  orbitSpeed={0.35}
+                  fontSize="clamp(2.5rem, 6.8vw, 5.8rem)"
+                  fontWeight={900}
+                  fontFamily="'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+                  letterSpacing="-0.035em"
+                  shadow
+                />
+              </div>
             </div>
           </h1>
 
