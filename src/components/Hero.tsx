@@ -606,7 +606,7 @@ export default function Hero() {
                   [{ text: 'DEVELOPER' }],
                   [
                     { text: 'STUDENTS' },
-                    { text: 'CLUB', faceColor: '#ea4335', depthColor: '#701313' },
+                    { text: 'CLUB', faceColor: '#2dd4bf', depthColor: '#0a4a45' },
                   ],
                 ]}
                 layers={isMobile ? 28 : 42}
