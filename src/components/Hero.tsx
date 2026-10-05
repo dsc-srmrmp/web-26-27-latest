@@ -639,13 +639,13 @@ export default function Hero() {
                 rel="noopener noreferrer"
                 className="hero-pill-btn"
               >
-                <span className="hero-pill-btn-inner">Join Community &rarr;</span>
+                <span className="hero-pill-btn-inner">Join Community</span>
               </a>
               <a href="/domains" className="hero-pill-btn">
-                <span className="hero-pill-btn-inner">Explore Domains &rarr;</span>
+                <span className="hero-pill-btn-inner">Explore Domains</span>
               </a>
               <a href="/gallery" className="hero-pill-btn">
-                <span className="hero-pill-btn-inner">DevSummit&apos;26 &rarr;</span>
+                <span className="hero-pill-btn-inner">DevSummit&apos;26</span>
               </a>
             </div>
           </div>
