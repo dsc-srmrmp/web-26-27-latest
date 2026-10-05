@@ -310,7 +310,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -318,6 +317,12 @@ html {
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:has(:target) {
+    scroll-behavior: smooth;
+  }
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -331,7 +336,7 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-muted);
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 h1,
