@@ -39,7 +39,7 @@ export default function Header({ active }: Props) {
         {/* Desktop CTA */}
         <div className="home-nav-cta">
           <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSfTb-CX5O1emu3Nnl-by9FRGVlEOTIwyZBoVxsm2t46eZdbFg/viewform"
+            href="https://forms.gle/PV8wbN27PVsFpUoz6"
             target="_blank"
             rel="noopener noreferrer"
             className="home-join-btn"

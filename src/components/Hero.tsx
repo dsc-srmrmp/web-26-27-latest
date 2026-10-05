@@ -633,7 +633,12 @@ export default function Hero() {
             <p className="hero-subtitle">SRM IST Ramapuram, Chennai, TN, India</p>
 
             <div className="hero-btn-row">
-              <a href="#contact" className="hero-pill-btn">
+              <a
+                href="https://forms.gle/PV8wbN27PVsFpUoz6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hero-pill-btn"
+              >
                 <span className="hero-pill-btn-inner">Join Community &rarr;</span>
               </a>
               <a href="/domains" className="hero-pill-btn">
