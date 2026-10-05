@@ -171,7 +171,7 @@ export default function Hero() {
         });
       }
 
-      // 4. Drive carousel horizontal rotation dynamically on page scroll
+      // 4. Drive carousel horizontal rotation smoothly on page scroll
       let lastProgress = 0;
       ScrollTrigger.create({
         trigger: container,
@@ -182,12 +182,10 @@ export default function Hero() {
           const deltaProgress = self.progress - lastProgress;
           lastProgress = self.progress;
 
-          const scrollDelta = deltaProgress * (isMobile ? 360 : 480);
-          const velocityDelta = self.getVelocity() * (isMobile ? 0.035 : 0.045);
-          const totalDelta = scrollDelta + velocityDelta;
+          const scrollDelta = deltaProgress * (isMobile ? 260 : 380);
 
-          if (Math.abs(totalDelta) > 0.3) {
-            carouselRef.current?.scrollBy(totalDelta);
+          if (Math.abs(scrollDelta) > 0.05) {
+            carouselRef.current?.scrollBy(scrollDelta);
           }
         },
       });
@@ -582,6 +580,10 @@ export default function Hero() {
       <a
         ref={scrollDownRef}
         href="#about"
+        onClick={(e) => {
+          e.preventDefault();
+          document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
+        }}
         className="hero-scroll-down"
         aria-label="Scroll down to explore"
       >
