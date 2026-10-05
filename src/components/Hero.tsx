@@ -437,6 +437,10 @@ export default function Hero() {
         }
 
         @media (max-width: 768px) {
+          .hero-master-wrapper {
+            height: 100svh;
+            height: 100dvh;
+          }
           .hero-ambient-spot {
             background:
               radial-gradient(circle 380px at 50% 36%, rgba(66, 133, 244, 0.18) 0%, transparent 70%),
@@ -448,9 +452,10 @@ export default function Hero() {
             padding-right: 12px;
           }
           .hero-center-backdrop {
-            width: min(380px, 96vw);
-            height: min(420px, 54vh);
-            background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.42) 58%, transparent 100%);
+            width: min(390px, 94vw);
+            height: min(440px, 56vh);
+            background: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.56) 60%, transparent 100%);
+            filter: blur(24px);
           }
           .hero-subtitle {
             font-size: clamp(0.92rem, 3.8vw, 1.15rem);
@@ -502,18 +507,19 @@ export default function Hero() {
         <FlexCarousel
           ref={carouselRef}
           items={HERO_GALLERY_ITEMS}
-          preset="liquid"
+          preset={isMobile ? 'ribbon' : 'liquid'}
           intro="rise"
-          fit="natural"
-          cardHeight={isMobile ? 0.42 : 0.50}
-          tilt={isMobile ? 24 : 54}
-          lensWidth={isMobile ? 0.84 : 0.76}
-          lensHeight={isMobile ? 0.98 : 1.15}
-          bend={isMobile ? 0.28 : 0.34}
-          reach={isMobile ? 0.34 : 0.38}
-          gap={isMobile ? 12 : 16}
-          radius={16}
-          squeeze={isMobile ? 0.12 : 0.2}
+          fit={isMobile ? 'portrait' : 'natural'}
+          cardHeight={isMobile ? 0.46 : 0.50}
+          tilt={isMobile ? 0 : 54}
+          lensWidth={isMobile ? 1.0 : 0.76}
+          lensHeight={isMobile ? 1.2 : 1.15}
+          bend={isMobile ? 0 : 0.34}
+          reach={isMobile ? 0 : 0.38}
+          dispersion={isMobile ? 0 : 0.45}
+          gap={isMobile ? 14 : 16}
+          radius={isMobile ? 20 : 16}
+          squeeze={isMobile ? 0 : 0.2}
           focusOnClick={true}
           captions={false}
           autoplay={true}
