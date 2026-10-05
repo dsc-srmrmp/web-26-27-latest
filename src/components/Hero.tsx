@@ -585,7 +585,7 @@ export default function Hero() {
           gap={isMobile ? 14 : 16}
           radius={isMobile ? 20 : 16}
           squeeze={isMobile ? 0 : 0.2}
-          focusOnClick={true}
+          focusOnClick={false}
           captions={false}
           autoplay={true}
           interval={3.8}

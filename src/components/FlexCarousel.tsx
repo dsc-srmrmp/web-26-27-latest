@@ -320,7 +320,7 @@ const FlexCarousel = forwardRef<FlexCarouselHandle, FlexCarouselProps>(function 
     liquid,
     followCursor,
     squeeze = 0.2,
-    focusOnClick = true,
+    focusOnClick = false,
     autoplay = false,
     interval = 4,
     captions = true,
