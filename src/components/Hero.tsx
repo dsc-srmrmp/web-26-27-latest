@@ -74,20 +74,25 @@ const HERO_GALLERY_ITEMS: FlexCarouselItem[] = [
 
 export default function Hero() {
   const heroContainerRef = useRef<HTMLDivElement | null>(null);
-  const textWrapRef = useRef<HTMLDivElement | null>(null);
+  const titleParallaxRef = useRef<HTMLDivElement | null>(null);
+  const metaParallaxRef = useRef<HTMLDivElement | null>(null);
+  const mouseTiltRef = useRef<HTMLDivElement | null>(null);
   const galleryStageRef = useRef<HTMLDivElement | null>(null);
   const carouselRef = useRef<FlexCarouselHandle | null>(null);
+  const scrollDownRef = useRef<HTMLAnchorElement | null>(null);
 
-  // Subtle interactive mouse tilt for floating text centerpiece
+  // Subtle interactive mouse tilt isolated to mouseTiltRef to avoid colliding with scroll tweens
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!textWrapRef.current) return;
+    if (!mouseTiltRef.current) return;
     const { innerWidth, innerHeight } = window;
     const xRatio = (e.clientX / innerWidth - 0.5) * 2;
     const yRatio = (e.clientY / innerHeight - 0.5) * 2;
 
-    gsap.to(textWrapRef.current, {
-      x: xRatio * 12,
-      y: -34 + yRatio * 8,
+    gsap.to(mouseTiltRef.current, {
+      x: xRatio * 14,
+      y: yRatio * 10,
+      rotateY: xRatio * 3,
+      rotateX: -yRatio * 2.5,
       duration: 0.6,
       ease: 'power2.out',
       overwrite: 'auto',
@@ -99,45 +104,63 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [handleMouseMove]);
 
-  // Integrated Scroll Parallax for Text Centerpiece & Liquid WebGL Gallery
+  // Integrated Scroll Parallax for DEVELOPER STUDENTS CLUB & Liquid WebGL Gallery
   useEffect(() => {
     const container = heroContainerRef.current;
     if (!container) return;
 
     const ctx = gsap.context(() => {
-      // 1. Hero text parallax departure (elevates, fades & blurs upward)
-      if (textWrapRef.current) {
-        gsap.to(textWrapRef.current, {
+      // 1. DEVELOPER STUDENTS CLUB Parallax Transition:
+      // Elevates upwards, tilts in 3D perspective, contracts scale, and blurs into distance
+      if (titleParallaxRef.current) {
+        gsap.to(titleParallaxRef.current, {
           scrollTrigger: {
             trigger: container,
             start: 'top top',
-            end: '65% top',
-            scrub: 0.35,
+            end: '85% top',
+            scrub: 0.5,
           },
-          y: -170,
+          y: -200,
+          rotateX: 14,
+          scale: 0.88,
           opacity: 0,
-          scale: 0.9,
-          filter: 'blur(10px)',
+          filter: 'blur(14px)',
           ease: 'power1.out',
         });
       }
 
-      // 2. Background liquid gallery stage parallax depth (slower counter-movement)
+      // 2. Subtitle & Action buttons fade out earlier to keep focus on the receding 3D letters
+      if (metaParallaxRef.current) {
+        gsap.to(metaParallaxRef.current, {
+          scrollTrigger: {
+            trigger: container,
+            start: 'top top',
+            end: '45% top',
+            scrub: 0.3,
+          },
+          y: -75,
+          opacity: 0,
+          filter: 'blur(8px)',
+          ease: 'power1.out',
+        });
+      }
+
+      // 3. Background liquid gallery stage parallax depth (smooth counter-movement)
       if (galleryStageRef.current) {
         gsap.to(galleryStageRef.current, {
           scrollTrigger: {
             trigger: container,
             start: 'top top',
             end: 'bottom top',
-            scrub: 0.5,
+            scrub: 0.6,
           },
-          y: 90,
-          scale: 1.05,
+          y: 110,
+          scale: 1.06,
           ease: 'none',
         });
       }
 
-      // 3. Drive carousel horizontal rotation dynamically on page scroll
+      // 4. Drive carousel horizontal rotation dynamically on page scroll
       let lastProgress = 0;
       ScrollTrigger.create({
         trigger: container,
@@ -148,15 +171,30 @@ export default function Hero() {
           const deltaProgress = self.progress - lastProgress;
           lastProgress = self.progress;
 
-          const scrollDelta = deltaProgress * 420;
-          const velocityDelta = self.getVelocity() * 0.04;
+          const scrollDelta = deltaProgress * 480;
+          const velocityDelta = self.getVelocity() * 0.045;
           const totalDelta = scrollDelta + velocityDelta;
 
-          if (Math.abs(totalDelta) > 0.4) {
+          if (Math.abs(totalDelta) > 0.3) {
             carouselRef.current?.scrollBy(totalDelta);
           }
         },
       });
+
+      // 5. Scroll down indicator fades away immediately upon scroll
+      if (scrollDownRef.current) {
+        gsap.to(scrollDownRef.current, {
+          scrollTrigger: {
+            trigger: container,
+            start: 'top top',
+            end: '20% top',
+            scrub: 0.2,
+          },
+          opacity: 0,
+          y: 20,
+          ease: 'power1.out',
+        });
+      }
     }, container);
 
     return () => ctx.revert();
@@ -251,20 +289,19 @@ export default function Hero() {
           padding: 0 20px;
         }
 
-        /* 3D Extruded Center Text Wrap */
-        .hero-3d-text-wrap {
+        /* Mouse Tilt Layer (Handles Cursor Parallax without colliding with Scroll) */
+        .hero-mouse-tilt-layer {
           position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
-          transform: translateY(-34px);
           transform-style: preserve-3d;
-          will-change: transform, opacity, filter;
+          will-change: transform;
           pointer-events: auto;
         }
 
-        /* Soft ambient radial backdrop to ensure maximum contrast and legibility over photos */
+        /* Soft ambient radial backdrop behind text */
         .hero-center-backdrop {
           position: absolute;
           top: 50%;
@@ -278,6 +315,13 @@ export default function Hero() {
           filter: blur(16px);
         }
 
+        /* DEVELOPER STUDENTS CLUB Parallax Box */
+        .hero-title-parallax-box {
+          transform-style: preserve-3d;
+          perspective: 1100px;
+          will-change: transform, opacity, filter;
+        }
+
         .hero-depth-title {
           margin: 0;
           padding: 0;
@@ -285,12 +329,20 @@ export default function Hero() {
           line-height: 1;
         }
 
+        /* Subtitle & Buttons Meta Box */
+        .hero-meta-parallax-box {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          will-change: transform, opacity, filter;
+        }
+
         .hero-subtitle {
           font-family: 'Inter', sans-serif;
           font-size: clamp(0.95rem, 1.8vw, 1.25rem);
           font-weight: 400;
           color: rgba(255, 255, 255, 0.85);
-          margin-top: 16px;
+          margin-top: 18px;
           margin-bottom: 0;
           letter-spacing: -0.01em;
           text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
@@ -301,7 +353,7 @@ export default function Hero() {
           align-items: center;
           justify-content: center;
           gap: 14px;
-          margin-top: 22px;
+          margin-top: 24px;
           flex-wrap: wrap;
         }
 
@@ -342,7 +394,7 @@ export default function Hero() {
 
         .hero-scroll-down {
           position: absolute;
-          bottom: 20px;
+          bottom: 22px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 20;
@@ -376,9 +428,6 @@ export default function Hero() {
         }
 
         @media (max-width: 640px) {
-          .hero-3d-text-wrap {
-            transform: translateY(-20px);
-          }
           .hero-btn-row {
             gap: 8px;
             margin-top: 18px;
@@ -414,7 +463,7 @@ export default function Hero() {
       {/* Primary Site Navigation */}
       <Header active="home" />
 
-      {/* Full-bleed Liquid WebGL Gallery Stage */}
+      {/* Full-bleed Liquid WebGL Gallery Stage (Captions removed) */}
       <div ref={galleryStageRef} className="hero-gallery-stage">
         <FlexCarousel
           ref={carouselRef}
@@ -422,12 +471,12 @@ export default function Hero() {
           preset="liquid"
           intro="rise"
           fit="natural"
-          cardHeight={0.44}
+          cardHeight={0.46}
           gap={14}
           radius={16}
           squeeze={0.2}
           focusOnClick={true}
-          captions={true}
+          captions={false}
           autoplay={true}
           interval={3.8}
           captureWheel={false}
@@ -436,54 +485,65 @@ export default function Hero() {
 
       {/* Foreground Centerpiece Overlay Layered Directly OVER Gallery */}
       <div className="hero-center-overlay">
-        <div ref={textWrapRef} className="hero-3d-text-wrap">
+        <div ref={mouseTiltRef} className="hero-mouse-tilt-layer">
           <div className="hero-center-backdrop" />
 
-          <h1 className="hero-depth-title" aria-label="Developer Students Club">
-            <DepthText
-              lines={[
-                [{ text: 'DEVELOPER' }],
-                [
-                  { text: 'STUDENTS' },
-                  { text: 'CLUB', faceColor: '#ea4335', depthColor: '#701313' },
-                ],
-              ]}
-              layers={34}
-              depth={2.4}
-              faceColor="#ffffff"
-              depthColor="#262d3a"
-              tilt={7.5}
-              pointerTracking
-              smoothing={0.14}
-              perspective={950}
-              autoOrbit
-              orbitSpeed={0.35}
-              fontSize="clamp(3.4rem, 9.6vw, 7.2rem)"
-              fontWeight={400}
-              fontFamily="'Bebas Neue', sans-serif"
-              letterSpacing="0.025em"
-              shadow
-            />
-          </h1>
+          {/* DEVELOPER STUDENTS CLUB with rich 3D perspective parallax scroll transition */}
+          <div ref={titleParallaxRef} className="hero-title-parallax-box">
+            <h1 className="hero-depth-title" aria-label="Developer Students Club">
+              <DepthText
+                lines={[
+                  [{ text: 'DEVELOPER' }],
+                  [
+                    { text: 'STUDENTS' },
+                    { text: 'CLUB', faceColor: '#ea4335', depthColor: '#701313' },
+                  ],
+                ]}
+                layers={34}
+                depth={2.4}
+                faceColor="#ffffff"
+                depthColor="#262d3a"
+                tilt={7.5}
+                pointerTracking
+                smoothing={0.14}
+                perspective={950}
+                autoOrbit
+                orbitSpeed={0.35}
+                fontSize="clamp(3.4rem, 9.6vw, 7.2rem)"
+                fontWeight={400}
+                fontFamily="'Bebas Neue', sans-serif"
+                letterSpacing="0.025em"
+                shadow
+              />
+            </h1>
+          </div>
 
-          <p className="hero-subtitle">SRM IST Ramapuram, Chennai, TN, India</p>
+          {/* Subtitle and CTA buttons with smooth early parallax fade */}
+          <div ref={metaParallaxRef} className="hero-meta-parallax-box">
+            <p className="hero-subtitle">SRM IST Ramapuram, Chennai, TN, India</p>
 
-          <div className="hero-btn-row">
-            <a href="#contact" className="hero-pill-btn">
-              <span className="hero-pill-btn-inner">Join Community &rarr;</span>
-            </a>
-            <a href="/domains" className="hero-pill-btn">
-              <span className="hero-pill-btn-inner">Explore Domains &rarr;</span>
-            </a>
-            <a href="/gallery" className="hero-pill-btn">
-              <span className="hero-pill-btn-inner">DevSummit&apos;26 &rarr;</span>
-            </a>
+            <div className="hero-btn-row">
+              <a href="#contact" className="hero-pill-btn">
+                <span className="hero-pill-btn-inner">Join Community &rarr;</span>
+              </a>
+              <a href="/domains" className="hero-pill-btn">
+                <span className="hero-pill-btn-inner">Explore Domains &rarr;</span>
+              </a>
+              <a href="/gallery" className="hero-pill-btn">
+                <span className="hero-pill-btn-inner">DevSummit&apos;26 &rarr;</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Down Chevron Indicator */}
-      <a href="#about" className="hero-scroll-down" aria-label="Scroll down to explore">
+      <a
+        ref={scrollDownRef}
+        href="#about"
+        className="hero-scroll-down"
+        aria-label="Scroll down to explore"
+      >
         <svg
           width="18"
           height="18"
