@@ -314,13 +314,13 @@ export default function JoinCommunitySection({ className = '' }: Props) {
           />
           <SocialIconBtn
             type="whatsapp"
-            href="https://chat.whatsapp.com"
+            href="https://whatsapp.com/channel/0029VbCeeKIBPzjgb6gesn26"
             value="Join our WhatsApp Community"
             label="WhatsApp Community"
           />
           <SocialIconBtn
             type="discord"
-            href="https://discord.gg"
+            href="https://discord.gg/W2hS5ka5T6"
             value="Join our Discord Server"
             label="Discord Server"
           />
