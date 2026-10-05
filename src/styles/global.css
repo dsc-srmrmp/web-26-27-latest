@@ -2145,7 +2145,7 @@ body.eye-comfort-mode::after {
 }
 
 .home-nav-logo img {
-  height: clamp(44px, 2.2vw + 20px, 64px);
+  height: clamp(52px, 2.5vw + 24px, 84px);
   width: auto;
   object-fit: contain;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -2158,7 +2158,7 @@ body.eye-comfort-mode::after {
 
 @media (max-width: 1080px) and (min-width: 768px) {
   .home-nav-logo img {
-    height: clamp(38px, 4vw, 48px);
+    height: clamp(44px, 4vw + 6px, 56px);
   }
 }
 
@@ -2173,17 +2173,17 @@ body.eye-comfort-mode::after {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 9999px;
-  padding: 6px 8px;
+  padding: clamp(5px, 0.2vw + 3px, 8px) clamp(7px, 0.25vw + 4px, 10px);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: clamp(3px, 0.15vw + 2px, 6px);
   pointer-events: auto;
 }
 
 .home-nav-pill a {
-  padding: 6px 14px;
+  padding: clamp(6px, 0.2vw + 4px, 9px) clamp(12px, 0.3vw + 8px, 18px);
   border-radius: 9999px;
-  font-size: 14px;
+  font-size: clamp(13.5px, 0.15vw + 12px, 15px);
   font-weight: 500;
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
@@ -2218,26 +2218,28 @@ body.eye-comfort-mode::after {
 .home-join-btn {
   background: #fff;
   color: #111827;
-  font-size: 14px;
+  font-size: clamp(14px, 0.35vw + 10px, 17px);
   font-weight: 600;
-  padding: 10px 24px;
+  letter-spacing: 0.01em;
+  padding: clamp(10px, 0.35vw + 6px, 15px) clamp(22px, 0.75vw + 14px, 34px);
   border-radius: 9999px;
   text-decoration: none;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
 }
 
 a.home-join-btn:hover {
-  background: #f3f4f6;
+  background: #f8fafc;
   color: #111827;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 1080px) and (min-width: 768px) {
   .home-join-btn {
-    padding: 8px 18px;
-    font-size: 13px;
+    padding: clamp(9px, 1.2vw, 12px) clamp(18px, 2vw, 24px);
+    font-size: clamp(13px, 1.2vw, 15px);
   }
 }
 
