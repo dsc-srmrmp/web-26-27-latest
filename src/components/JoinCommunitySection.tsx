@@ -1,3 +1,5 @@
+import SocialIconBtn from './SocialIconBtn';
+
 interface Props {
   className?: string;
 }
@@ -11,7 +13,7 @@ export default function JoinCommunitySection({ className = '' }: Props) {
           width: 100%;
           padding: 120px 24px 140px;
           margin-top: -60px;
-          background: #080d0b;
+          background: url('/bg/students_renaissance.jpg') center 35%/cover no-repeat;
           color: #e8ede9;
           text-align: center;
           overflow: hidden;
@@ -20,24 +22,13 @@ export default function JoinCommunitySection({ className = '' }: Props) {
           mask-image: linear-gradient(to bottom, transparent 0%, black 80px, black calc(100% - 100px), transparent 100%);
         }
 
-        /* Ambient Renaissance Artwork & Emerald Obsidian Chiaroscuro */
-        .join-art-backdrop {
-          position: absolute;
-          inset: 0;
-          background: url('/bg/renaissance_academy.jpg') center 40%/cover no-repeat;
-          opacity: 0.18;
-          mix-blend-mode: luminosity;
-          filter: grayscale(40%) contrast(1.15);
-          pointer-events: none;
-          z-index: 0;
-        }
-
+        /* Atmospheric Renaissance Chiaroscuro & Emerald Obsidian Veil */
         .join-chiaroscuro-overlay {
           position: absolute;
           inset: 0;
           background:
-            radial-gradient(ellipse 950px 550px at 50% 50%, rgba(29, 209, 161, 0.12) 0%, rgba(5, 19, 16, 0.75) 50%, rgba(8, 13, 11, 0.98) 100%),
-            linear-gradient(to bottom, #080d0b 0%, rgba(5, 19, 16, 0.6) 45%, #030d0f 100%);
+            radial-gradient(ellipse 1100px 650px at 50% 50%, rgba(8, 13, 11, 0.62) 0%, rgba(5, 19, 16, 0.85) 60%, rgba(8, 13, 11, 0.96) 100%),
+            linear-gradient(to bottom, rgba(8, 13, 11, 0.92) 0%, rgba(5, 19, 16, 0.45) 45%, rgba(3, 13, 15, 0.92) 100%);
           pointer-events: none;
           z-index: 1;
         }
@@ -46,7 +37,7 @@ export default function JoinCommunitySection({ className = '' }: Props) {
         .join-card {
           max-width: 860px;
           margin: 0 auto;
-          background: linear-gradient(155deg, rgba(14, 22, 18, 0.85) 0%, rgba(7, 13, 11, 0.95) 100%);
+          background: linear-gradient(155deg, rgba(14, 22, 18, 0.88) 0%, rgba(7, 13, 11, 0.95) 100%);
           backdrop-filter: blur(28px);
           -webkit-backdrop-filter: blur(28px);
           border: 1px solid rgba(29, 209, 161, 0.28);
@@ -119,126 +110,67 @@ export default function JoinCommunitySection({ className = '' }: Props) {
           font-weight: 400;
         }
 
-        /* Social Interactive Row */
-        .join-socials-row {
+        /* Social Icons Row (Identical aesthetics to /contact page) */
+        .contact-socials-row {
           display: flex;
           align-items: center;
           justify-content: center;
-          flex-wrap: wrap;
           gap: 16px;
           margin-bottom: 38px;
+          position: relative;
+          z-index: 10;
         }
 
-        /* Interactive Social Pill Button */
-        .social-pill-btn {
-          position: relative;
+        .social-icon-btn {
+          width: 46px;
+          height: 46px;
+          border-radius: 23px;
+          background: rgba(17, 23, 20, 0.55);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           display: inline-flex;
           align-items: center;
-          justify-content: center;
-          height: 56px;
-          padding: 0 18px;
-          border-radius: 9999px;
-          background: rgba(14, 23, 19, 0.85);
-          border: 1px solid rgba(29, 209, 161, 0.28);
-          color: #e8ede9;
+          justify-content: flex-start;
+          color: #ffffff;
           text-decoration: none;
+          padding: 0 12px;
+          box-sizing: border-box;
           overflow: hidden;
           white-space: nowrap;
-          cursor: pointer;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+          transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .social-pill-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
-          flex-shrink: 0;
-          transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .social-pill-label {
-          max-width: 0;
-          opacity: 0;
-          overflow: hidden;
-          margin-left: 0;
-          font-family: 'Inter', sans-serif;
-          font-size: 14.5px;
-          font-weight: 600;
-          letter-spacing: 0.01em;
-          color: #ffffff;
-          transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin-left 0.3s ease;
-        }
-
-        .social-pill-arrow {
-          max-width: 0;
-          opacity: 0;
-          overflow: hidden;
-          margin-left: 0;
-          flex-shrink: 0;
-          transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin-left 0.3s ease, transform 0.3s ease;
-        }
-
-        /* Hover Expansion on Desktop */
-        .social-pill-btn:hover {
-          padding: 0 24px;
+        .social-icon-btn:hover {
           transform: translateY(-2px);
         }
 
-        .social-pill-btn:hover .social-pill-label {
-          max-width: 280px;
-          opacity: 1;
-          margin-left: 11px;
+        .btn-icon-wrap {
+          flex-shrink: 0;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #ffffff;
         }
 
-        .social-pill-btn:hover .social-pill-arrow {
-          max-width: 20px;
-          opacity: 0.9;
-          margin-left: 8px;
-          transform: translateX(2px);
+        .social-icon-btn svg {
+          display: block;
+          width: 20px;
+          height: 20px;
+          color: inherit;
         }
 
-        .social-pill-btn:hover .social-pill-icon {
-          transform: scale(1.12);
-        }
-
-        /* Brand Colors on Hover */
-        /* WhatsApp: Emerald / Mint Glow */
-        .social-whatsapp .social-pill-icon {
-          color: #1dd1a1;
-        }
-        .social-whatsapp:hover {
-          background: rgba(29, 209, 161, 0.16);
-          border-color: rgba(29, 209, 161, 0.7);
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(29, 209, 161, 0.35);
-        }
-
-        /* Instagram: Radiant Sunset Gradient Glow */
-        .social-insta .social-pill-icon {
-          color: #f472b6;
-        }
-        .social-insta:hover {
-          background: rgba(236, 72, 153, 0.14);
-          border-color: rgba(244, 114, 182, 0.65);
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(236, 72, 153, 0.3);
-        }
-        .social-insta:hover .social-pill-icon {
-          color: #fb7185;
-        }
-
-        /* Discord: Blurple / Cyan Glow */
-        .social-discord .social-pill-icon {
-          color: #38bdf8;
-        }
-        .social-discord:hover {
-          background: rgba(56, 189, 248, 0.14);
-          border-color: rgba(56, 189, 248, 0.65);
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(56, 189, 248, 0.3);
-        }
-        .social-discord:hover .social-pill-icon {
-          color: #7dd3fc;
+        .btn-text {
+          display: none;
+          opacity: 0;
+          margin-left: 10px;
+          font-family: 'Inter', sans-serif;
+          font-size: 13.5px;
+          font-weight: 500;
+          color: #ffffff;
         }
 
         /* Classical Ornamental Divider Rule */
@@ -314,33 +246,14 @@ export default function JoinCommunitySection({ className = '' }: Props) {
           .join-headline {
             font-size: 2.15rem;
           }
-          .join-socials-row {
-            flex-direction: column;
-            width: 100%;
+          .contact-socials-row {
+            flex-wrap: wrap;
             gap: 12px;
-          }
-          .social-pill-btn {
-            width: 100%;
-            justify-content: flex-start;
-            padding: 0 20px;
-            height: 52px;
-            border-radius: 12px;
-          }
-          .social-pill-label {
-            max-width: none !important;
-            opacity: 1 !important;
-            margin-left: 12px !important;
-          }
-          .social-pill-arrow {
-            max-width: none !important;
-            opacity: 0.8 !important;
-            margin-left: auto !important;
           }
         }
       `}</style>
 
-      {/* Atmospheric Chiaroscuro & Emerald Obsidian Backdrop */}
-      <div className="join-art-backdrop" />
+      {/* Atmospheric Chiaroscuro & Renaissance Art Veil */}
       <div className="join-chiaroscuro-overlay" />
 
       {/* Renaissance Plinth / Emerald Obsidian Tablet */}
@@ -386,74 +299,31 @@ export default function JoinCommunitySection({ className = '' }: Props) {
           this semester?
         </h2>
 
-        {/* Updated Accurate Subtext */}
+        {/* Accurate Subtext */}
         <p className="join-subtext">
           A student-driven community to learn, collaborate, and build impactful technology solutions together at SRM IST Ramapuram. Connect across our channels and grow with us.
         </p>
 
         {/* 3 Interactive Expanding Social Buttons: Instagram, WhatsApp, Discord */}
-        <div className="join-socials-row">
-          {/* Instagram */}
-          <a
+        <div className="contact-socials-row">
+          <SocialIconBtn
+            type="instagram"
             href="https://instagram.com/dscsrmrmp"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-pill-btn social-insta"
-            aria-label="Follow us on Instagram"
-          >
-            <span className="social-pill-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-              </svg>
-            </span>
-            <span className="social-pill-label">Follow us on Insta</span>
-            <svg className="social-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14" />
-              <path d="M12 5l7 7-7 7" />
-            </svg>
-          </a>
-
-          {/* WhatsApp */}
-          <a
+            value="Follow us on Insta"
+            label="Instagram"
+          />
+          <SocialIconBtn
+            type="whatsapp"
             href="https://chat.whatsapp.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-pill-btn social-whatsapp"
-            aria-label="Join our WhatsApp Community"
-          >
-            <span className="social-pill-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-              </svg>
-            </span>
-            <span className="social-pill-label">Join our WhatsApp Community</span>
-            <svg className="social-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14" />
-              <path d="M12 5l7 7-7 7" />
-            </svg>
-          </a>
-
-          {/* Discord */}
-          <a
+            value="Join our WhatsApp Community"
+            label="WhatsApp Community"
+          />
+          <SocialIconBtn
+            type="discord"
             href="https://discord.gg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-pill-btn social-discord"
-            aria-label="Join our Discord Server"
-          >
-            <span className="social-pill-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-              </svg>
-            </span>
-            <span className="social-pill-label">Join our Discord Server</span>
-            <svg className="social-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14" />
-              <path d="M12 5l7 7-7 7" />
-            </svg>
-          </a>
+            value="Join our Discord Server"
+            label="Discord Server"
+          />
         </div>
 
         {/* Classical Ornamental Divider Rule */}
