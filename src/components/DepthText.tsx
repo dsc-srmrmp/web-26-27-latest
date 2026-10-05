@@ -15,8 +15,18 @@ const getLayerColor = (faceColor: string, depthColor: string, index: number, tot
 const getTransform = (rotateX: number, rotateY: number): string =>
   `rotateX(${rotateX.toFixed(3)}deg) rotateY(${rotateY.toFixed(3)}deg)`;
 
+export interface DepthTextSegment {
+  text: string;
+  faceColor?: string;
+  depthColor?: string;
+  className?: string;
+}
+
+export type DepthTextLine = DepthTextSegment[];
+
 export interface DepthTextProps {
   text?: string;
+  lines?: DepthTextLine[];
   layers?: number;
   depth?: number;
   faceColor?: string;
@@ -38,6 +48,7 @@ export interface DepthTextProps {
 
 export default function DepthText({
   text = 'Elevate',
+  lines,
   layers = 34,
   depth = 2.4,
   faceColor = '#f8fafc',
@@ -48,10 +59,10 @@ export default function DepthText({
   perspective = 900,
   autoOrbit = true,
   orbitSpeed = 0.35,
-  fontSize = 'clamp(2.4rem, 6.6vw, 5.8rem)',
+  fontSize = 'clamp(3rem, 8vw, 6.6rem)',
   fontWeight = 900,
-  fontFamily = "'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-  letterSpacing = '-0.035em',
+  fontFamily = "'Bebas Neue', sans-serif",
+  letterSpacing = '0.02em',
   shadow = true,
   className = '',
   style = {},
@@ -68,17 +79,21 @@ export default function DepthText({
 
   const baseRotation = useMemo(() => ({ x: -safeTilt * 0.32, y: safeTilt * 0.42 }), [safeTilt]);
 
+  const parsedLines: DepthTextLine[] = useMemo(() => {
+    if (lines && lines.length > 0) return lines;
+    return text.split('\n').map((line) => [{ text: line, faceColor, depthColor }]);
+  }, [lines, text, faceColor, depthColor]);
+
   const depthLayers = useMemo(
     () =>
       Array.from({ length: safeLayers }, (_, layerIndex) => {
         const index = safeLayers - layerIndex;
         return {
           index,
-          color: getLayerColor(faceColor, depthColor, index, safeLayers),
           transform: `translateZ(${-index * safeDepth}px)`,
         };
       }),
-    [safeLayers, safeDepth, faceColor, depthColor]
+    [safeLayers, safeDepth]
   );
 
   useEffect(() => {
@@ -106,10 +121,7 @@ export default function DepthText({
     }
 
     const handlePointerMove = (event: PointerEvent) => {
-      // If part of a .depth-text-group, sync rotation to common container
-      const groupEl = root.closest('.depth-text-group') as HTMLElement | null;
-      const targetEl = groupEl || root;
-      const rect = targetEl.getBoundingClientRect();
+      const rect = root.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
 
       activePointer = true;
@@ -170,9 +182,6 @@ export default function DepthText({
     '--depth-text-letter-spacing': letterSpacing,
     '--depth-text-face-color': faceColor,
     '--depth-text-depth-color': depthColor,
-    '--depth-text-shadow': shadow
-      ? `0 22px 34px color-mix(in srgb, ${depthColor} 36%, transparent), 0 4px 8px rgba(0, 0, 0, 0.28)`
-      : 'none',
   };
 
   return (
@@ -183,12 +192,50 @@ export default function DepthText({
             aria-hidden="true"
             className="depth-text__layer"
             key={layer.index}
-            style={{ color: layer.color, transform: layer.transform }}
+            style={{ transform: layer.transform }}
           >
-            {text}
+            {parsedLines.map((line, lIdx) => (
+              <span key={lIdx} className="depth-text__line">
+                {line.map((segment, sIdx) => (
+                  <span
+                    key={sIdx}
+                    className={`depth-text__segment ${segment.className || ''}`.trim()}
+                    style={{
+                      color: getLayerColor(
+                        segment.faceColor || faceColor,
+                        segment.depthColor || depthColor,
+                        layer.index,
+                        safeLayers
+                      ),
+                    }}
+                  >
+                    {segment.text}
+                  </span>
+                ))}
+              </span>
+            ))}
           </span>
         ))}
-        <span className="depth-text__face">{text}</span>
+        <span className="depth-text__face">
+          {parsedLines.map((line, lIdx) => (
+            <span key={lIdx} className="depth-text__line">
+              {line.map((segment, sIdx) => (
+                <span
+                  key={sIdx}
+                  className={`depth-text__segment ${segment.className || ''}`.trim()}
+                  style={{
+                    color: segment.faceColor || faceColor,
+                    textShadow: shadow
+                      ? `0 22px 34px color-mix(in srgb, ${segment.depthColor || depthColor} 36%, transparent), 0 4px 8px rgba(0, 0, 0, 0.28)`
+                      : 'none',
+                  }}
+                >
+                  {segment.text}
+                </span>
+              ))}
+            </span>
+          ))}
+        </span>
       </span>
     </span>
   );

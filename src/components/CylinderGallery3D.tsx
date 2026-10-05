@@ -461,24 +461,6 @@ export default function CylinderGallery3D() {
           line-height: 1;
         }
 
-        .cyl-depth-group {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 2px;
-          transform-style: preserve-3d;
-        }
-
-        .depth-row {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: clamp(8px, 1.8vw, 18px);
-          transform-style: preserve-3d;
-          line-height: 0.88;
-        }
-
         /* Subtitle */
         .cyl-subtitle {
           font-family: 'Inter', sans-serif;
@@ -620,66 +602,30 @@ export default function CylinderGallery3D() {
       <div className="cyl-center-overlay">
         <div ref={text3DRef} className="cyl-3d-text-wrap">
           <h1 className="cyl-depth-title" aria-label="Developer Students Club">
-            <div className="depth-text-group cyl-depth-group">
-              <div className="depth-row">
-                <DepthText
-                  text="DEVELOPER"
-                  layers={34}
-                  depth={2.4}
-                  faceColor="#ffffff"
-                  depthColor="#262d3a"
-                  tilt={7.5}
-                  pointerTracking
-                  smoothing={0.14}
-                  perspective={900}
-                  autoOrbit
-                  orbitSpeed={0.35}
-                  fontSize="clamp(2.5rem, 6.8vw, 5.8rem)"
-                  fontWeight={900}
-                  fontFamily="'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
-                  letterSpacing="-0.035em"
-                  shadow
-                />
-              </div>
-              <div className="depth-row">
-                <DepthText
-                  text="STUDENTS"
-                  layers={34}
-                  depth={2.4}
-                  faceColor="#ffffff"
-                  depthColor="#262d3a"
-                  tilt={7.5}
-                  pointerTracking
-                  smoothing={0.14}
-                  perspective={900}
-                  autoOrbit
-                  orbitSpeed={0.35}
-                  fontSize="clamp(2.5rem, 6.8vw, 5.8rem)"
-                  fontWeight={900}
-                  fontFamily="'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
-                  letterSpacing="-0.035em"
-                  shadow
-                />
-                <DepthText
-                  text="CLUB"
-                  layers={36}
-                  depth={2.6}
-                  faceColor="#ea4335"
-                  depthColor="#701313"
-                  tilt={7.5}
-                  pointerTracking
-                  smoothing={0.14}
-                  perspective={900}
-                  autoOrbit
-                  orbitSpeed={0.35}
-                  fontSize="clamp(2.5rem, 6.8vw, 5.8rem)"
-                  fontWeight={900}
-                  fontFamily="'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
-                  letterSpacing="-0.035em"
-                  shadow
-                />
-              </div>
-            </div>
+            <DepthText
+              lines={[
+                [{ text: 'DEVELOPER' }],
+                [
+                  { text: 'STUDENTS' },
+                  { text: 'CLUB', faceColor: '#ea4335', depthColor: '#701313' },
+                ],
+              ]}
+              layers={34}
+              depth={2.4}
+              faceColor="#ffffff"
+              depthColor="#262d3a"
+              tilt={7.5}
+              pointerTracking
+              smoothing={0.14}
+              perspective={950}
+              autoOrbit
+              orbitSpeed={0.35}
+              fontSize="clamp(3.2rem, 8.8vw, 6.8rem)"
+              fontWeight={900}
+              fontFamily="'Bebas Neue', sans-serif"
+              letterSpacing="0.025em"
+              shadow
+            />
           </h1>
 
           <p className="cyl-subtitle">SRM IST Ramapuram &bull; Chennai, TN, India</p>
