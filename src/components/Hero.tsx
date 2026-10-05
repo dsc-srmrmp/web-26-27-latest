@@ -477,28 +477,28 @@ export default function Hero() {
               radial-gradient(circle 300px at 50% 54%, rgba(234, 67, 53, 0.14) 0%, transparent 68%);
           }
           .hero-center-overlay {
-            padding-top: 48px;
-            padding-left: 12px;
-            padding-right: 12px;
+            padding-top: 56px;
+            padding-left: 10px;
+            padding-right: 10px;
           }
           .hero-center-backdrop {
-            width: min(390px, 94vw);
-            height: min(440px, 56vh);
-            background: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.56) 60%, transparent 100%);
-            filter: blur(24px);
+            width: min(320px, 86vw);
+            height: min(390px, 52vh);
+            background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(0, 0, 0, 0.76) 0%, rgba(0, 0, 0, 0.36) 55%, transparent 100%);
+            filter: blur(20px);
           }
           .hero-subtitle {
-            font-size: clamp(0.92rem, 3.8vw, 1.15rem);
-            margin-top: 16px;
+            font-size: clamp(0.88rem, 3.5vw, 1.08rem);
+            margin-top: 14px;
           }
           .hero-btn-row {
-            gap: 10px;
-            margin-top: 20px;
-            max-width: 360px;
+            gap: 8px;
+            margin-top: 16px;
+            max-width: 350px;
           }
           .hero-pill-btn-inner {
-            padding: 9.5px 18px;
-            font-size: 12px;
+            padding: 8px 15px;
+            font-size: 11.5px;
           }
           .hero-scroll-down {
             bottom: 14px;
@@ -572,19 +572,19 @@ export default function Hero() {
         <FlexCarousel
           ref={carouselRef}
           items={HERO_GALLERY_ITEMS}
-          preset={isMobile ? 'ribbon' : 'liquid'}
+          preset="liquid"
           intro="rise"
           fit={isMobile ? 'portrait' : 'natural'}
-          cardHeight={isMobile ? 0.46 : 0.50}
-          tilt={isMobile ? 0 : 54}
-          lensWidth={isMobile ? 1.0 : 0.76}
-          lensHeight={isMobile ? 1.2 : 1.15}
-          bend={isMobile ? 0 : 0.34}
-          reach={isMobile ? 0 : 0.38}
-          dispersion={isMobile ? 0 : 0.45}
-          gap={isMobile ? 14 : 16}
-          radius={isMobile ? 20 : 16}
-          squeeze={isMobile ? 0 : 0.2}
+          cardHeight={isMobile ? 0.36 : 0.50}
+          tilt={isMobile ? 42 : 54}
+          lensWidth={isMobile ? 0.88 : 0.76}
+          lensHeight={isMobile ? 1.25 : 1.15}
+          bend={isMobile ? 0.40 : 0.34}
+          reach={isMobile ? 0.34 : 0.38}
+          dispersion={isMobile ? 0.32 : 0.45}
+          gap={isMobile ? 12 : 16}
+          radius={isMobile ? 16 : 16}
+          squeeze={isMobile ? 0.15 : 0.2}
           focusOnClick={false}
           captions={false}
           autoplay={true}
