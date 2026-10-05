@@ -557,7 +557,7 @@ export default function Hero() {
               <div className="dsc-marquee-star">★</div>
               <div className="dsc-marquee-item">BUILDING REAL PRODUCTS • SRM IST RAMAPURAM</div>
               <div className="dsc-marquee-star">★</div>
-              <div className="dsc-marquee-item">GOOGLE DEVELOPER GROUPS ON CAMPUS</div>
+              <div className="dsc-marquee-item">EMPOWERING STUDENT DEVELOPERS • SRM IST RAMAPURAM</div>
               <div className="dsc-marquee-star">★</div>
             </div>
           ))}
