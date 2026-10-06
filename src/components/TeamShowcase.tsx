@@ -52,69 +52,101 @@ const normalizeUrl = (url?: string, type?: 'github' | 'linkedin' | 'insta' | 'x'
   }
 };
 
+const CACHE_KEY = 'dsc_team_cache_v3';
+
+// Synchronously read local cache on startup for instantaneous zero-latency render
+const getInitialCachedMembers = (fallback: Member[]): Member[] => {
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed?.members) && parsed.members.length > 0) {
+          return parsed.members;
+        }
+      }
+    } catch {}
+  }
+  return fallback;
+};
+
 export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
-  // DB state initialized with SSR snapshot, actively refreshed from database on client mount
-  const [members, setMembers] = useState<Member[]>(initialMembers ?? []);
+  // Render immediately from local cache or SSR snapshot
+  const [members, setMembers] = useState<Member[]>(() =>
+    getInitialCachedMembers(initialMembers ?? [])
+  );
   const [activeTab, setActiveTab] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'graph'>('grid');
 
-  // Keep state in sync if initialMembers prop changes
+  // Track cached database version in memory ref
+  const versionRef = useRef<string | null>(null);
+
+  // Read cached version once on mount
   useEffect(() => {
-    if (initialMembers && initialMembers.length > 0) {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.version) {
+          versionRef.current = String(parsed.version);
+        }
+        if (Array.isArray(parsed?.members) && parsed.members.length > 0) {
+          setMembers(parsed.members);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Sync if initialMembers prop changes and no cache was found
+  useEffect(() => {
+    if (initialMembers && initialMembers.length > 0 && (!members || members.length === 0)) {
       setMembers(initialMembers);
     }
   }, [initialMembers]);
 
-  // Actively fetch live members from Turso DB / API route
+  // Differential sync: checks lightweight DB version first, only queries entire DB if altered
   useEffect(() => {
     let isMounted = true;
 
-    async function fetchLiveMembers() {
+    async function checkDbChanges() {
       try {
-        let fetched: Member[] = [];
+        const { getTeamVersion, getTeamMembers } = await import('../lib/turso');
+        const dbVersion = await getTeamVersion();
 
-        // 1. Primary: fetch from same-origin /api/team with cache-busting
-        try {
-          const res = await fetch(`/api/team?t=${Date.now()}`, { cache: 'no-store' });
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data?.members) && data.members.length > 0) {
-              fetched = data.members;
-            }
-          }
-        } catch (apiErr) {
-          console.warn('/api/team fetch error:', apiErr);
+        // If version matches cache, render directly from cache without querying entire DB
+        if (versionRef.current && versionRef.current === dbVersion) {
+          return;
         }
 
-        // 2. Direct Turso query fallback if API endpoint was empty
-        if (!fetched.length) {
+        // DB altered or fresh session: retrieve full member list from database
+        const fresh = await getTeamMembers();
+        if (isMounted && Array.isArray(fresh) && fresh.length > 0) {
+          versionRef.current = dbVersion;
+          setMembers(fresh);
           try {
-            const { getTeamMembers } = await import('../lib/turso');
-            const live = await getTeamMembers();
-            if (Array.isArray(live) && live.length > 0) {
-              fetched = live;
-            }
-          } catch (directErr) {
-            console.error('Direct Turso database fetch error:', directErr);
-          }
-        }
-
-        if (isMounted && fetched.length > 0) {
-          setMembers(fetched);
+            localStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({
+                version: dbVersion,
+                members: fresh,
+                updatedAt: Date.now(),
+              })
+            );
+          } catch {}
         }
       } catch (err) {
-        console.error('Failed to actively fetch live team members:', err);
+        console.warn('Differential DB sync warning:', err);
       }
     }
 
-    fetchLiveMembers();
+    checkDbChanges();
 
-    // Auto-refresh from database every 10 seconds to catch live updates
-    const syncTimer = setInterval(fetchLiveMembers, 10000);
+    // Periodically re-check version in background every 12 seconds
+    const timer = setInterval(checkDbChanges, 12000);
 
     return () => {
       isMounted = false;
-      clearInterval(syncTimer);
+      clearInterval(timer);
     };
   }, []);
 
@@ -139,17 +171,9 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
       if (!card) return;
 
       const handleMouseMove = (e: MouseEvent) => {
-        // Stabilize card tilt when hovering over social buttons to avoid canceling clicks
         const target = e.target as HTMLElement | null;
+        // Freeze tilt updates when cursor is over social buttons or overlay to prevent matrix shift canceling clicks
         if (target?.closest('.team-social-overlay-row, .team-social-circle-btn, a, button')) {
-          gsap.to(card, {
-            rotateX: 0,
-            rotateY: 0,
-            scale: 1.025,
-            duration: 0.15,
-            ease: 'power2.out',
-            overwrite: 'auto',
-          });
           return;
         }
 
@@ -160,13 +184,13 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         const xc = rect.width / 2;
         const yc = rect.height / 2;
 
-        const tiltX = (yc - y) / 16;
-        const tiltY = (x - xc) / 16;
+        const tiltX = (yc - y) / 24;
+        const tiltY = (x - xc) / 24;
 
         gsap.to(card, {
           rotateX: tiltX,
           rotateY: tiltY,
-          scale: 1.025,
+          scale: 1.015,
           duration: 0.35,
           ease: 'power2.out',
           overwrite: 'auto',
@@ -312,6 +336,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
   };
 
   // Uniform card renderer used across ALL sections
+  // Uniform card renderer used across ALL sections
   const renderCard = (m: Member, key: string | number) => {
     const ghUrl = normalizeUrl(m.github, 'github');
     const liUrl = normalizeUrl(m.linkedin, 'linkedin');
@@ -355,12 +380,10 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     className="team-social-circle-btn"
                     aria-label={`${m.name} GitHub`}
                     title={`${m.name} GitHub`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(ghUrl, '_blank', 'noopener,noreferrer');
-                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
                     </svg>
                   </a>
@@ -373,12 +396,10 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     className="team-social-circle-btn"
                     aria-label={`${m.name} LinkedIn`}
                     title={`${m.name} LinkedIn`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(liUrl, '_blank', 'noopener,noreferrer');
-                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                       <rect x="2" y="9" width="4" height="12" />
                       <circle cx="4" cy="4" r="2" />
@@ -393,12 +414,10 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     className="team-social-circle-btn"
                     aria-label={`${m.name} Instagram`}
                     title={`${m.name} Instagram`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(inUrl, '_blank', 'noopener,noreferrer');
-                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -413,12 +432,10 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     className="team-social-circle-btn"
                     aria-label={`${m.name} X`}
                     title={`${m.name} X`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(xUrl, '_blank', 'noopener,noreferrer');
-                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
                   </a>
@@ -429,12 +446,10 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     className="team-social-circle-btn"
                     aria-label={`${m.name} Email`}
                     title={`${m.name} Email`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(emUrl, '_blank', 'noopener,noreferrer');
-                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
@@ -1132,12 +1147,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         /* Team Showcase Layouts */
         .team-showcase-container {
           width: 100%;
-          max-width: 100%;
+          max-width: 1080px;
           min-width: 0;
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-bottom: 40px;
+          margin: 0 auto 40px;
           box-sizing: border-box;
         }
 
@@ -1146,7 +1161,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           width: 100%;
           max-width: 100%;
           min-width: 0;
-          margin-bottom: 56px;
+          margin-bottom: 44px;
           box-sizing: border-box;
         }
 
@@ -1158,7 +1173,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           display: flex;
           align-items: center;
           gap: 16px;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
           width: 100%;
         }
 
@@ -1199,7 +1214,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
         .domain-section-title {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 1.35rem;
+          font-size: 1.25rem;
           font-weight: 700;
           color: #ffffff;
           letter-spacing: -0.01em;
@@ -1223,31 +1238,31 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           background: linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.01) 100%);
         }
 
-        /* Team Showcase Grid: Max 4, Min 2 */
+        /* Team Showcase Grid: Compact 4 columns */
         .team-showcase-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 24px;
+          gap: 16px;
           width: 100%;
           perspective: 1000px;
           align-items: stretch;
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .team-showcase-grid {
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 14px;
           }
         }
 
         @media (max-width: 768px) {
           .team-showcase-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
             width: 100%;
           }
           .team-domain-section {
-            margin-bottom: 36px;
+            margin-bottom: 32px;
           }
           .domain-section-header {
             gap: 10px;
@@ -1258,7 +1273,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
             flex-shrink: 1;
           }
           .domain-section-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             white-space: nowrap;
           }
           .domain-section-line {
@@ -1268,8 +1283,8 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
         @media (max-width: 380px) {
           .team-showcase-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
           }
         }
 
@@ -1285,19 +1300,19 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         /* Dynamic Domain Glow Spotlights */
         .card-hover-glow-spotlight {
           position: absolute;
-          inset: -30px;
+          inset: -15px;
           opacity: 0;
-          filter: blur(40px);
+          filter: blur(28px);
           transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
           z-index: 1;
           pointer-events: none;
-          border-radius: 40px;
-          transform: scale(0.85);
+          border-radius: 30px;
+          transform: scale(0.88);
         }
 
         .team-card-wrapper:hover .card-hover-glow-spotlight {
           opacity: 1.0;
-          transform: scale(1.15) translateZ(-15px);
+          transform: scale(1.1) translateZ(-15px);
         }
 
         .spotlight-presidency {
@@ -1316,7 +1331,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           background: radial-gradient(circle, rgba(29, 209, 161, 0.3) 0%, rgba(29, 209, 161, 0) 70%);
         }
 
-        /* The Member Card */
+        /* The Member Card - Compact Old Style */
         .team-member-card {
           background-image: 
             url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E"),
@@ -1325,8 +1340,8 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 20px;
-          padding: 14px;
+          border-radius: 16px;
+          padding: 10px 10px 12px 10px;
           display: flex;
           flex-direction: column;
           align-items: stretch;
@@ -1343,18 +1358,18 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         .team-card-wrapper:hover .team-member-card,
         .team-member-card:hover {
           border-color: rgba(29, 209, 161, 0.28);
-          box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
         }
 
         /* 3D Parallax layers */
         .team-image-container {
           position: relative;
           width: 100%;
-          aspect-ratio: 1 / 1.15;
-          border-radius: 12px;
+          aspect-ratio: 1 / 1.05;
+          border-radius: 10px;
           overflow: hidden;
-          margin-bottom: 12px;
-          transform: translateZ(28px);
+          margin-bottom: 8px;
+          transform: translateZ(20px);
           transform-style: preserve-3d;
           background-color: #0b110f;
           border: 1px solid rgba(255, 255, 255, 0.04);
@@ -1370,10 +1385,10 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           background: radial-gradient(circle at center, #1a382d 0%, #0b110f 80%);
           color: #1dd1a1;
           font-family: 'Inter', sans-serif;
-          font-size: 2.2rem;
+          font-size: 2rem;
           font-weight: 700;
           letter-spacing: 0.05em;
-          border-radius: 12px;
+          border-radius: 10px;
           user-select: none;
         }
 
@@ -1394,7 +1409,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         .team-card-wrapper:hover .team-member-image,
         .team-member-card:hover .team-member-image {
           filter: grayscale(0%) brightness(1) contrast(1);
-          transform: scale(1.05) translateZ(8px);
+          transform: scale(1.04) translateZ(8px);
         }
 
         .team-image-overlay {
@@ -1408,15 +1423,15 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
         .team-social-overlay-row {
           position: absolute;
-          bottom: 16px;
+          bottom: 12px;
           left: 50%;
-          transform: translateX(-50%) translateY(14px);
+          transform: translateX(-50%) translateY(10px);
           opacity: 0;
           pointer-events: none;
           display: flex;
-          gap: 10px;
+          gap: 8px;
           z-index: 50;
-          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .team-card-wrapper:hover .team-social-overlay-row,
@@ -1426,14 +1441,25 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           pointer-events: auto;
         }
 
+        /* Touch / Mobile: always show overlay so mobile users can tap socials */
+        @media (max-width: 768px), (hover: none) {
+          .team-social-overlay-row {
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(0) !important;
+            pointer-events: auto !important;
+            bottom: 8px !important;
+            gap: 6px !important;
+          }
+        }
+
         .team-social-circle-btn {
-          width: 34px;
-          height: 34px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
-          background: rgba(11, 17, 15, 0.85);
+          background: rgba(11, 17, 15, 0.88);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.18);
+          border: 1px solid rgba(255, 255, 255, 0.22);
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -1446,16 +1472,24 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           z-index: 60;
         }
 
+        .team-social-circle-btn svg,
+        .team-social-circle-btn path,
+        .team-social-circle-btn rect,
+        .team-social-circle-btn circle,
+        .team-social-circle-btn line {
+          pointer-events: none !important;
+        }
+
         .team-social-circle-btn:hover {
           border-color: #1dd1a1;
           color: #1dd1a1;
-          background-color: rgba(29, 209, 161, 0.25);
-          transform: translateY(-2px) scale(1.12);
-          box-shadow: 0 4px 12px rgba(29, 209, 161, 0.25);
+          background-color: rgba(29, 209, 161, 0.28);
+          transform: translateY(-2px) scale(1.1);
+          box-shadow: 0 4px 12px rgba(29, 209, 161, 0.3);
         }
 
         .team-member-info {
-          transform: translateZ(36px);
+          transform: translateZ(24px);
           transform-style: preserve-3d;
           text-align: left;
           padding: 0 4px;
@@ -1468,13 +1502,13 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         .team-member-info h3 {
           font-family: 'Inter', sans-serif;
           font-weight: 600;
-          font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+          font-size: clamp(0.85rem, 1.8vw, 0.98rem);
           color: var(--text-color);
-          margin-bottom: 4px;
+          margin-bottom: 2px;
           letter-spacing: -0.01em;
-          transform: translateZ(8px);
+          transform: translateZ(6px);
           line-height: 1.25;
-          min-height: 2.5em;
+          min-height: auto;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -1484,14 +1518,14 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         .team-member-role {
           font-family: 'Inter', sans-serif;
           font-weight: 500;
-          font-size: clamp(0.68rem, 1.5vw, 0.78rem);
+          font-size: clamp(0.68rem, 1.3vw, 0.74rem);
           color: #1dd1a1; /* Neon mint-green */
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          margin-bottom: 4px;
-          transform: translateZ(14px);
-          line-height: 1.3;
-          min-height: 2.6em;
+          margin-bottom: 2px;
+          transform: translateZ(10px);
+          line-height: 1.25;
+          min-height: auto;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
