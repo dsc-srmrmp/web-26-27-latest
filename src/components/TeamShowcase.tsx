@@ -27,11 +27,49 @@ export interface TeamShowcaseProps {
 const domainLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
 export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
-  // DB is the ONLY source of truth — no fallback fake data
-  const members: Member[] = initialMembers ?? [];
+  // DB state initialized with SSR snapshot, actively refreshed from database on client mount
+  const [members, setMembers] = useState<Member[]>(initialMembers ?? []);
   const [activeTab, setActiveTab] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'graph'>('grid');
 
+  // Actively fetch live members from Turso DB / API route
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchLiveMembers() {
+      try {
+        let fetched: Member[] = [];
+        // Attempt /api/team route first
+        try {
+          const res = await fetch('/api/team');
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data?.members) && data.members.length > 0) {
+              fetched = data.members;
+            }
+          }
+        } catch {}
+
+        // Fallback to direct client-side Turso query if API route is unavailable
+        if (!fetched.length) {
+          const { getTeamMembers } = await import('../lib/turso');
+          fetched = await getTeamMembers();
+        }
+
+        if (isMounted && fetched.length > 0) {
+          setMembers(fetched);
+        }
+      } catch (err) {
+        console.error('Failed to actively fetch live team members:', err);
+      }
+    }
+
+    fetchLiveMembers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Selected node profile display inside Graph view
   const [selectedGraphMember, setSelectedGraphMember] = useState<Member | null>(null);

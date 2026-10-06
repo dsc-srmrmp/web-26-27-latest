@@ -87,7 +87,7 @@ const teamMembers = await getTeamMembers();
 
       <!-- Team Showcase Cards Grid (React Island) -->
       <section class="team-showcase-section" style="position: relative; z-index: 10; width: 100%;">
-        <TeamShowcase client:idle initialMembers={teamMembers} />
+        <TeamShowcase client:load initialMembers={teamMembers} />
       </section>
 
       <!-- Bottom Interactive Call to Action Block -->
