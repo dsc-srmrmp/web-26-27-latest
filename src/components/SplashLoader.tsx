@@ -33,9 +33,15 @@ export default function SplashLoader() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const indexRef = useRef(0);
 
-  // Always display intro loader on load
+  // Only display intro loader on homepage
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const path = window.location.pathname.replace(/\/$/, '') || '/';
+      if (path !== '/') {
+        setVisible(false);
+        document.body.classList.remove("splash-active");
+        return;
+      }
       try {
         sessionStorage.removeItem("dsc-splash-seen");
       } catch {}
