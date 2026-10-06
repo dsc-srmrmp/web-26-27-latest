@@ -173,69 +173,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
     }
   }, [activeTab, viewMode, members]);
 
-  // 3D Parallax tilt effect on card hover — stabilized when hovering social buttons
-  useEffect(() => {
-    if (viewMode !== 'grid' || !containerRef.current) return;
-    if (typeof window !== 'undefined' && window.matchMedia && !window.matchMedia('(hover: hover)').matches) return;
 
-    const wrappers = containerRef.current.querySelectorAll<HTMLDivElement>('.team-card-wrapper');
-    const cleanups: (() => void)[] = [];
-
-    wrappers.forEach((wrapper) => {
-      const card = wrapper.querySelector<HTMLDivElement>('.team-member-card');
-      if (!card) return;
-
-      const handleMouseMove = (e: MouseEvent) => {
-        // Freeze tilt updates when cursor is hovering or interacting with social buttons
-        // This stops the card from moving under the cursor, keeping buttons 100% stable and clickable!
-        const target = e.target as HTMLElement | null;
-        if (target && target.closest('.team-social-overlay-row')) {
-          return;
-        }
-
-        const rect = wrapper.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const xc = rect.width / 2;
-        const yc = rect.height / 2;
-
-        const tiltX = (yc - y) / 14;
-        const tiltY = (x - xc) / 14;
-
-        gsap.to(card, {
-          rotateX: tiltX,
-          rotateY: tiltY,
-          scale: 1.025,
-          duration: 0.35,
-          ease: 'power2.out',
-          overwrite: 'auto',
-        });
-      };
-
-      const handleMouseLeave = () => {
-        gsap.to(card, {
-          rotateX: 0,
-          rotateY: 0,
-          scale: 1,
-          duration: 0.45,
-          ease: 'power2.out',
-          overwrite: 'auto',
-        });
-      };
-
-      wrapper.addEventListener('mousemove', handleMouseMove);
-      wrapper.addEventListener('mouseleave', handleMouseLeave);
-      cleanups.push(() => {
-        wrapper.removeEventListener('mousemove', handleMouseMove);
-        wrapper.removeEventListener('mouseleave', handleMouseLeave);
-      });
-    });
-
-    return () => {
-      cleanups.forEach((fn) => fn());
-    };
-  }, [activeTab, viewMode, members]);
 
   // Tab counts — derived from data, not hardcoded
   const getTabCount = (key: string) => {
@@ -1292,8 +1230,6 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
         .team-card-wrapper {
           position: relative;
-          transform-style: preserve-3d;
-          perspective: 1000px;
           height: 100%;
           display: flex;
           flex-direction: column;
@@ -1309,12 +1245,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           z-index: 1;
           pointer-events: none;
           border-radius: 30px;
-          transform: scale(0.92) translateZ(-15px);
+          transform: scale(0.92);
         }
 
         .team-card-wrapper:hover .card-hover-glow-spotlight {
           opacity: 1.0;
-          transform: scale(1.08) translateZ(-15px);
+          transform: scale(1.08);
         }
 
         .spotlight-presidency {
@@ -1350,8 +1286,8 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           justify-content: space-between;
           height: 100%;
           box-sizing: border-box;
-          transition: border-color 0.25s ease, box-shadow 0.25s ease;
-          transform-style: preserve-3d;
+          transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+
           position: relative;
           z-index: 2;
         }
@@ -1360,6 +1296,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         .team-member-card:hover {
           border-color: rgba(29, 209, 161, 0.38);
           box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 18px rgba(29, 209, 161, 0.12);
+          transform: translateY(-4px);
 
         }
 
@@ -1373,8 +1310,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           margin-bottom: 8px;
           background-color: #0b110f;
           border: 1px solid rgba(255, 255, 255, 0.04);
-          transform: translateZ(20px);
-          transform-style: preserve-3d;
+
           flex-shrink: 0;
         }
 
@@ -1401,7 +1337,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           filter: grayscale(100%) brightness(0.7) contrast(1.15);
           transition: filter 0.4s ease, transform 0.4s ease;
           transform-origin: center center;
-          transform: translateZ(4px);
+
           
           /* Soft gradient mask for cutout look */
           mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 12%);
@@ -1411,7 +1347,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         .team-card-wrapper:hover .team-member-image,
         .team-member-card:hover .team-member-image {
           filter: grayscale(0%) brightness(1) contrast(1);
-          transform: scale(1.03) translateZ(8px);
+          transform: scale(1.03);
         }
 
         .team-image-overlay {
@@ -1420,14 +1356,14 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           background: linear-gradient(to top, rgba(8, 13, 11, 0.8) 0%, rgba(8, 13, 11, 0) 40%);
           pointer-events: none;
           z-index: 1;
-          transform: translateZ(12px);
+
         }
 
         .team-social-overlay-row {
           position: absolute;
           bottom: 12px;
           left: 50%;
-          transform: translateX(-50%) translateY(8px) translateZ(36px);
+          transform: translateX(-50%) translateY(8px);
           opacity: 0;
           pointer-events: none;
           display: flex;
@@ -1440,7 +1376,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         .team-member-card:hover .team-social-overlay-row,
         .team-social-overlay-row:hover {
           opacity: 1 !important;
-          transform: translateX(-50%) translateY(0) translateZ(36px) !important;
+          transform: translateX(-50%) translateY(0) !important;
           pointer-events: auto !important;
         }
 
@@ -1448,7 +1384,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         @media (max-width: 768px), (hover: none) {
           .team-social-overlay-row {
             opacity: 1 !important;
-            transform: translateX(-50%) translateY(0) translateZ(36px) !important;
+            transform: translateX(-50%) translateY(0) !important;
             pointer-events: auto !important;
             bottom: 8px !important;
             gap: 6px !important;
@@ -1472,8 +1408,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           pointer-events: auto !important;
           text-decoration: none;
           position: relative;
-          z-index: 90;
-          transform: translateZ(5px);
+          z-index: 60;
         }
 
         .team-social-circle-btn * {
@@ -1484,13 +1419,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           border-color: #1dd1a1 !important;
           color: #1dd1a1 !important;
           background-color: rgba(29, 209, 161, 0.32) !important;
-          transform: translateY(-2px) scale(1.12) translateZ(10px);
+          transform: translateY(-2px) scale(1.12);
           box-shadow: 0 4px 14px rgba(29, 209, 161, 0.35);
         }
 
         .team-member-info {
-          transform: translateZ(24px);
-          transform-style: preserve-3d;
+
           text-align: left;
           padding: 0 4px;
           flex: 1;
@@ -1506,7 +1440,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           color: var(--text-color);
           margin-bottom: 2px;
           letter-spacing: -0.01em;
-          transform: translateZ(6px);
+
           line-height: 1.25;
           min-height: auto;
           display: -webkit-box;
@@ -1523,7 +1457,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin-bottom: 2px;
-          transform: translateZ(10px);
+
           line-height: 1.25;
           min-height: auto;
           display: -webkit-box;
