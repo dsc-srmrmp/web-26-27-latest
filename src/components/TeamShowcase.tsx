@@ -26,6 +26,32 @@ export interface TeamShowcaseProps {
 // Auto-capitalize domain key for tab labels — no hardcoded label map needed
 const domainLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
+// Normalize handles or partial links to guaranteed valid external URLs
+const normalizeUrl = (url?: string, type?: 'github' | 'linkedin' | 'insta' | 'x' | 'email') => {
+  if (!url) return undefined;
+  const trimmed = url.trim();
+  if (!trimmed) return undefined;
+  if (type === 'email') {
+    return trimmed.startsWith('mailto:') ? trimmed : `mailto:${trimmed}`;
+  }
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  const handle = trimmed.replace(/^@/, '');
+  switch (type) {
+    case 'github':
+      return `https://github.com/${handle}`;
+    case 'linkedin':
+      return `https://www.linkedin.com/in/${handle}`;
+    case 'insta':
+      return `https://www.instagram.com/${handle}`;
+    case 'x':
+      return `https://x.com/${handle}`;
+    default:
+      return `https://${trimmed}`;
+  }
+};
+
 export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
   // DB state initialized with SSR snapshot, actively refreshed from database on client mount
   const [members, setMembers] = useState<Member[]>(initialMembers ?? []);
@@ -92,6 +118,11 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
       if (!card) return;
 
       const handleMouseMove = (e: MouseEvent) => {
+        // Stabilize card tilt when hovering over social buttons to avoid canceling clicks
+        if ((e.target as HTMLElement)?.closest('.team-social-overlay-row')) {
+          return;
+        }
+
         const rect = wrapper.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -273,14 +304,28 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           {(m.github || m.linkedin || m.insta || m.x || m.email) && (
             <div className="team-social-overlay-row">
               {m.github && (
-                <a href={m.github} target="_blank" rel="noopener noreferrer" className="team-social-circle-btn" aria-label="GitHub">
+                <a
+                  href={normalizeUrl(m.github, 'github')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="team-social-circle-btn"
+                  aria-label={`${m.name} GitHub`}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
                   </svg>
                 </a>
               )}
               {m.linkedin && (
-                <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="team-social-circle-btn" aria-label="LinkedIn">
+                <a
+                  href={normalizeUrl(m.linkedin, 'linkedin')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="team-social-circle-btn"
+                  aria-label={`${m.name} LinkedIn`}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                     <rect x="2" y="9" width="4" height="12" />
@@ -289,7 +334,14 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                 </a>
               )}
               {m.insta && (
-                <a href={m.insta} target="_blank" rel="noopener noreferrer" className="team-social-circle-btn" aria-label="Instagram">
+                <a
+                  href={normalizeUrl(m.insta, 'insta')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="team-social-circle-btn"
+                  aria-label={`${m.name} Instagram`}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
@@ -298,14 +350,26 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                 </a>
               )}
               {m.x && (
-                <a href={m.x} target="_blank" rel="noopener noreferrer" className="team-social-circle-btn" aria-label="X">
+                <a
+                  href={normalizeUrl(m.x, 'x')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="team-social-circle-btn"
+                  aria-label={`${m.name} X`}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
                 </a>
               )}
               {m.email && (
-                <a href={m.email} className="team-social-circle-btn" aria-label="Email">
+                <a
+                  href={normalizeUrl(m.email, 'email')}
+                  className="team-social-circle-btn"
+                  aria-label={`${m.name} Email`}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
@@ -523,14 +587,28 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                 )}
                 <div className="panel-actions-row">
                   {selectedGraphMember.github && (
-                    <a href={selectedGraphMember.github} target="_blank" rel="noopener noreferrer" className="panel-action-icon" aria-label="GitHub">
+                    <a
+                      href={normalizeUrl(selectedGraphMember.github, 'github')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="panel-action-icon"
+                      aria-label="GitHub"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
                       </svg>
                     </a>
                   )}
                   {selectedGraphMember.linkedin && (
-                    <a href={selectedGraphMember.linkedin} target="_blank" rel="noopener noreferrer" className="panel-action-icon" aria-label="LinkedIn">
+                    <a
+                      href={normalizeUrl(selectedGraphMember.linkedin, 'linkedin')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="panel-action-icon"
+                      aria-label="LinkedIn"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                         <rect x="2" y="9" width="4" height="12" />
@@ -539,7 +617,14 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     </a>
                   )}
                   {selectedGraphMember.insta && (
-                    <a href={selectedGraphMember.insta} target="_blank" rel="noopener noreferrer" className="panel-action-icon" aria-label="Instagram">
+                    <a
+                      href={normalizeUrl(selectedGraphMember.insta, 'insta')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="panel-action-icon"
+                      aria-label="Instagram"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
@@ -548,14 +633,26 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     </a>
                   )}
                   {selectedGraphMember.x && (
-                    <a href={selectedGraphMember.x} target="_blank" rel="noopener noreferrer" className="panel-action-icon" aria-label="X">
+                    <a
+                      href={normalizeUrl(selectedGraphMember.x, 'x')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="panel-action-icon"
+                      aria-label="X"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                       </svg>
                     </a>
                   )}
                   {selectedGraphMember.email && (
-                    <a href={selectedGraphMember.email} className="panel-action-icon" aria-label="Email">
+                    <a
+                      href={normalizeUrl(selectedGraphMember.email, 'email')}
+                      className="panel-action-icon"
+                      aria-label="Email"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                         <polyline points="22,6 12,13 2,6" />
@@ -1246,46 +1343,60 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
         .team-social-overlay-row {
           position: absolute;
-          bottom: 16px;
+          bottom: 14px;
           left: 50%;
-          transform: translateX(-50%) translateY(14px);
+          transform: translateX(-50%) translateY(12px) translateZ(40px);
           opacity: 0;
           pointer-events: none;
           display: flex;
-          gap: 10px;
-          z-index: 20;
-          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+          gap: 8px;
+          z-index: 50;
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .team-card-wrapper:hover .team-social-overlay-row,
         .team-member-card:hover .team-social-overlay-row {
           opacity: 1;
-          transform: translateX(-50%) translateY(0);
+          transform: translateX(-50%) translateY(0) translateZ(40px);
           pointer-events: auto;
+        }
+
+        /* On mobile & touch devices, keep social buttons visible & clickable without requiring hover */
+        @media (hover: none), (max-width: 768px) {
+          .team-social-overlay-row {
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(0) translateZ(40px) !important;
+            pointer-events: auto !important;
+          }
         }
 
         .team-social-circle-btn {
           width: 34px;
           height: 34px;
           border-radius: 50%;
-          background: rgba(11, 17, 15, 0.85);
+          background: rgba(11, 17, 15, 0.92);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.18);
+          border: 1px solid rgba(255, 255, 255, 0.22);
           display: flex;
           align-items: center;
           justify-content: center;
           color: #e8ede9;
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           cursor: pointer;
+          position: relative;
+          z-index: 60;
+          pointer-events: auto !important;
+          text-decoration: none;
+          transform: translateZ(10px);
         }
 
         .team-social-circle-btn:hover {
           border-color: #1dd1a1;
           color: #1dd1a1;
-          background-color: rgba(29, 209, 161, 0.2);
-          transform: translateY(-2px) scale(1.12);
-          box-shadow: 0 4px 12px rgba(29, 209, 161, 0.25);
+          background-color: rgba(29, 209, 161, 0.25);
+          transform: translateY(-2px) scale(1.15) translateZ(15px);
+          box-shadow: 0 4px 14px rgba(29, 209, 161, 0.3);
         }
 
         .team-member-info {
