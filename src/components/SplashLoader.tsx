@@ -60,6 +60,9 @@ export default function SplashLoader() {
         if (intervalRef.current) clearInterval(intervalRef.current);
         setTimeout(() => {
           setFading(true);
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("dsc:splash-fade"));
+          }
         }, 600);
         return;
       }
@@ -79,6 +82,8 @@ export default function SplashLoader() {
     setVisible(false);
     if (typeof window !== "undefined") {
       document.body.classList.remove("splash-active");
+      document.body.classList.add("splash-complete");
+      window.dispatchEvent(new CustomEvent("dsc:splash-complete"));
     }
   }
 

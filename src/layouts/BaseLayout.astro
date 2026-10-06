@@ -31,7 +31,7 @@ const { title, description } = Astro.props;
   <!-- LCP image preload: kick off hero background fetch before CSS is parsed -->
   <link rel="preload" as="image" fetchpriority="high" href="/creative-ai/hero_bg1.webp">
 </head>
-<body>
+<body class="splash-active">
   <SplashLoader client:load />
   <slot />
 </body>
