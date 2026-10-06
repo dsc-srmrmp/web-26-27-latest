@@ -538,11 +538,14 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
       <style>{`
         .team-component-wrapper {
           width: 100%;
+          max-width: 100%;
+          min-width: 0;
           display: flex;
           flex-direction: column;
           align-items: center;
           position: relative;
           z-index: 10;
+          box-sizing: border-box;
         }
 
         /* Liquid Glass Team Controls Toolbar */
@@ -551,9 +554,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           justify-content: center;
           align-items: center;
           width: 100%;
+          max-width: 100%;
+          min-width: 0;
           margin-bottom: 36px;
           position: relative;
           z-index: 20;
+          box-sizing: border-box;
         }
 
         .team-glass-bar {
@@ -692,7 +698,7 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         @media (max-width: 768px) {
           .team-toolbar-controls {
             margin-bottom: 24px;
-            padding: 0 8px;
+            padding: 0 4px;
           }
           .team-glass-tab {
             height: 38px;
@@ -710,21 +716,57 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         @media (max-width: 620px) {
           .team-glass-bar {
             flex-direction: column;
-            border-radius: 26px;
-            padding: 6px;
-            gap: 6px;
-            width: auto;
+            border-radius: 20px;
+            padding: 8px 6px;
+            gap: 8px;
+            width: 100%;
             max-width: 100%;
+            box-sizing: border-box;
           }
           .team-glass-divider {
-            width: 80%;
+            width: 85%;
             height: 1px;
             margin: 0;
           }
           .team-glass-group {
             width: 100%;
             justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+          }
+          .team-glass-tab {
+            height: 36px;
+            min-width: 36px;
+            padding: 0 8px;
+          }
+          .team-glass-tab.active {
+            padding: 0 10px;
+          }
+          .team-glass-tab.active .tab-label {
+            max-width: 110px;
+            font-size: 11.5px;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .team-glass-group {
             gap: 4px;
+          }
+          .team-glass-tab {
+            height: 34px;
+            min-width: 34px;
+            padding: 0 6px;
+          }
+          .team-glass-tab.active {
+            padding: 0 8px;
+          }
+          .team-glass-tab.active .tab-label {
+            max-width: 95px;
+            font-size: 11px;
+          }
+          .team-glass-tab .tab-icon {
+            width: 16px;
+            height: 16px;
           }
         }
 
@@ -890,16 +932,22 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
         /* Team Showcase Layouts */
         .team-showcase-container {
           width: 100%;
+          max-width: 100%;
+          min-width: 0;
           display: flex;
           flex-direction: column;
           align-items: center;
           margin-bottom: 40px;
+          box-sizing: border-box;
         }
 
         /* Domain Sections in All View */
         .team-domain-section {
           width: 100%;
+          max-width: 100%;
+          min-width: 0;
           margin-bottom: 56px;
+          box-sizing: border-box;
         }
 
         .team-domain-section:last-child {
@@ -1001,8 +1049,20 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           .team-domain-section {
             margin-bottom: 36px;
           }
+          .domain-section-header {
+            gap: 10px;
+            min-width: 0;
+          }
+          .domain-section-title-wrap {
+            min-width: 0;
+            flex-shrink: 1;
+          }
           .domain-section-title {
             font-size: 1.15rem;
+            white-space: nowrap;
+          }
+          .domain-section-line {
+            min-width: 15px;
           }
         }
 

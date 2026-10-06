@@ -207,18 +207,30 @@ const teamMembers = await getTeamMembers();
       margin: 16px auto 28px !important;
       font-size: 14px !important;
       padding: 0 12px;
+      max-width: 100% !important;
     }
 
     .team-cta-box {
       flex-direction: column;
       align-items: flex-start;
-      gap: 24px;
-      padding: 30px;
+      gap: 20px;
+      padding: 24px 20px;
+      width: 100%;
+      box-sizing: border-box;
     }
     
     .team-cta-btn {
       width: 100%;
       justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .team-cta-box {
+      padding: 20px 16px;
+    }
+    .team-cta-text h2 {
+      font-size: 1.45rem;
     }
   }
 </style>
