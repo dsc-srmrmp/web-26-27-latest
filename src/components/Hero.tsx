@@ -117,6 +117,187 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [handleMouseMove]);
 
+  // Entrance "in" animation played right after splash intro sequence fades
+  useEffect(() => {
+    let triggered = false;
+    let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+    let tl: gsap.core.Timeline | null = null;
+
+    const playEntranceAnimation = () => {
+      if (triggered) return;
+      triggered = true;
+
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+      carouselRef.current?.wake();
+
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        gsap.set(
+          [
+            galleryStageRef.current,
+            '.hero-depth-title',
+            '.hero-center-backdrop',
+            '.hero-subtitle',
+            '.hero-pill-btn',
+            '.dsc-marquee-container',
+            '.home-nav-header',
+            '.mobile-glass-nav',
+            scrollDownRef.current,
+            '.hero-ambient-spot',
+            '.hero-side-rays',
+            '.hero-corner-graphic',
+          ],
+          { opacity: 1, x: 0, y: 0, scale: 1, filter: 'none', clearProps: 'all' }
+        );
+        return;
+      }
+
+      tl = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+        onComplete: () => {
+          gsap.set(['.hero-depth-title', '.hero-subtitle', '.hero-pill-btn'], {
+            clearProps: 'filter',
+          });
+        },
+      });
+
+      // 1. Ambient lighting & decorative graphics
+      tl.fromTo(
+        '.hero-ambient-spot, .hero-corner-graphic',
+        { opacity: 0 },
+        { opacity: 1, duration: 1.1, ease: 'power2.out' },
+        0
+      );
+
+      tl.fromTo(
+        '.hero-side-rays',
+        { opacity: 0 },
+        { opacity: 0.65, duration: 1.2, ease: 'power2.out' },
+        0
+      );
+
+      // 2. Liquid WebGL Gallery Stage rises with depth and subtle expansion
+      if (galleryStageRef.current) {
+        tl.fromTo(
+          galleryStageRef.current,
+          { opacity: 0, scale: 0.93, y: 48, filter: 'blur(10px)' },
+          { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 1.25, ease: 'power3.out' },
+          0.05
+        );
+      }
+
+      // 3. Central 3D DEVELOPER STUDENTS CLUB title emerges with colossal depth
+      tl.fromTo(
+        '.hero-depth-title',
+        { opacity: 0, y: 55, scale: 0.91, filter: 'blur(14px)' },
+        { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power3.out' },
+        0.12
+      );
+
+      // 4. Soft ambient glow behind 3D letters
+      tl.fromTo(
+        '.hero-center-backdrop',
+        { opacity: 0, scale: 0.75 },
+        { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out' },
+        0.18
+      );
+
+      // 5. Campus location subtitle slides into crisp focus
+      tl.fromTo(
+        '.hero-subtitle',
+        { opacity: 0, y: 25, filter: 'blur(6px)' },
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.85, ease: 'power2.out' },
+        0.38
+      );
+
+      // 6. Pill CTA buttons emerge with energetic spring stagger
+      tl.fromTo(
+        '.hero-pill-btn',
+        { opacity: 0, y: 24, scale: 0.9 },
+        { opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.7, ease: 'back.out(1.6)' },
+        0.52
+      );
+
+      // 7. Top Marquee drops down from top
+      tl.fromTo(
+        '.dsc-marquee-container',
+        { yPercent: -100, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 0.85, ease: 'power2.out' },
+        0.25
+      );
+
+      // 8. Desktop Header Navbar drops in from above
+      tl.fromTo(
+        '.home-nav-header',
+        { y: -25, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: 'power2.out' },
+        0.32
+      );
+
+      // 9. Mobile nav glides up from bottom
+      tl.fromTo(
+        '.mobile-glass-nav',
+        { y: 35, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: 'power2.out' },
+        0.38
+      );
+
+      // 10. Down chevron indicator emerges
+      if (scrollDownRef.current) {
+        tl.fromTo(
+          scrollDownRef.current,
+          { opacity: 0, scale: 0.5, y: -10 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: 'back.out(1.8)' },
+          0.68
+        );
+      }
+    };
+
+    if (typeof document !== 'undefined' && document.body.classList.contains('splash-active')) {
+      // Immediately prime initial hidden state so nothing shows underneath before fade
+      gsap.set(
+        [
+          galleryStageRef.current,
+          '.hero-depth-title',
+          '.hero-center-backdrop',
+          '.hero-subtitle',
+          '.hero-pill-btn',
+          '.dsc-marquee-container',
+          '.home-nav-header',
+          '.mobile-glass-nav',
+          scrollDownRef.current,
+          '.hero-ambient-spot',
+          '.hero-side-rays',
+          '.hero-corner-graphic',
+        ],
+        { opacity: 0 }
+      );
+
+      const handleSplashFade = () => playEntranceAnimation();
+      window.addEventListener('dsc:splash-fade', handleSplashFade, { once: true });
+      window.addEventListener('dsc:splash-complete', handleSplashFade, { once: true });
+
+      fallbackTimer = setTimeout(() => {
+        playEntranceAnimation();
+      }, 4000);
+
+      return () => {
+        window.removeEventListener('dsc:splash-fade', handleSplashFade);
+        window.removeEventListener('dsc:splash-complete', handleSplashFade);
+        if (fallbackTimer) clearTimeout(fallbackTimer);
+        tl?.kill();
+      };
+    } else {
+      playEntranceAnimation();
+      return () => {
+        tl?.kill();
+      };
+    }
+  }, []);
+
   // Integrated Scroll Parallax for DEVELOPER STUDENTS CLUB & Liquid WebGL Gallery
   useEffect(() => {
     const container = heroContainerRef.current;
