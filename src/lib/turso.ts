@@ -132,3 +132,23 @@ export async function getTeamMembers(): Promise<FormattedTeamMember[]> {
     } catch {}
   }
 }
+
+export async function getTeamVersion(): Promise<string> {
+  const client = createClient({ url, authToken });
+  try {
+    const sql = `
+      SELECT 
+        COUNT(*) || '-' || IFNULL(MAX(id), 0) || '-' || CAST(TOTAL(length(name) + length(ifnull(team, '')) + length(ifnull(img, '')) + length(ifnull(github, '')) + length(ifnull(linkedin, '')) + length(ifnull(insta, '')) + length(ifnull(x, ''))) AS INTEGER) AS version
+      FROM team_members
+    `;
+    const res = await client.execute(sql);
+    return String(res.rows[0]?.version || '0');
+  } catch (err) {
+    console.error('Failed to get team version from Turso:', err);
+    return '0';
+  } finally {
+    try {
+      client.close();
+    } catch {}
+  }
+}
