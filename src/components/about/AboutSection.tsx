@@ -241,14 +241,58 @@ export default function AboutSection() {
   const imageInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const storyRefs = useRef<(HTMLDivElement | null)[]>([]);
   const eventRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const storyTimelineRef = useRef<HTMLDivElement | null>(null);
+  const storyLineFillRef = useRef<HTMLDivElement | null>(null);
+  const eventsTimelineRef = useRef<HTMLDivElement | null>(null);
+  const eventsSpineFillRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let ticking = false;
 
-    const updateParallax = () => {
+    const updateScrollEffects = () => {
       const vh = window.innerHeight;
+      // Active reveal focus line: items trigger sequentially as user scrolls down
+      const triggerY = vh * 0.72;
 
-      // Event image parallax - Static scroll effect
+      // 1. Story Chronology dynamic progress beam
+      if (storyTimelineRef.current && storyLineFillRef.current) {
+        const rect = storyTimelineRef.current.getBoundingClientRect();
+        const scrolledPast = triggerY - rect.top;
+        const progress = Math.max(0, Math.min(1, scrolledPast / (rect.height || 1)));
+        storyLineFillRef.current.style.height = `${progress * 100}%`;
+      }
+
+      // 2. Events Spine dynamic progress beam
+      if (eventsTimelineRef.current && eventsSpineFillRef.current) {
+        const rect = eventsTimelineRef.current.getBoundingClientRect();
+        const scrolledPast = triggerY - rect.top;
+        const progress = Math.max(0, Math.min(1, scrolledPast / (rect.height || 1)));
+        eventsSpineFillRef.current.style.height = `${progress * 100}%`;
+      }
+
+      // 3. Chronology Story cards: sequential one-by-one reveal
+      storyRefs.current.forEach((ref) => {
+        if (!ref) return;
+        const rect = ref.getBoundingClientRect();
+        if (rect.top <= triggerY) {
+          ref.classList.add('revealed');
+        } else {
+          ref.classList.remove('revealed');
+        }
+      });
+
+      // 4. Recent Events cards: sequential one-by-one reveal
+      eventRefs.current.forEach((ref) => {
+        if (!ref) return;
+        const rect = ref.getBoundingClientRect();
+        if (rect.top <= triggerY) {
+          ref.classList.add('revealed');
+        } else {
+          ref.classList.remove('revealed');
+        }
+      });
+
+      // 5. Event image parallax within frame
       imageInnerRefs.current.forEach((ref) => {
         if (!ref) return;
         const rect = ref.parentElement?.getBoundingClientRect();
@@ -256,9 +300,7 @@ export default function AboutSection() {
         const elementCenter = rect.top + rect.height / 2;
         const offset = (elementCenter - vh / 2) / (vh / 2);
         const clampedOffset = Math.max(-1, Math.min(1, offset));
-        
-        // Move image inside its static frame by +/- 50px based on scroll position
-        ref.style.transform = `translateY(${clampedOffset * 50}px)`;
+        ref.style.transform = `translateY(${clampedOffset * 45}px)`;
       });
 
       ticking = false;
@@ -266,39 +308,18 @@ export default function AboutSection() {
 
     const onScroll = () => {
       if (!ticking) {
-        window.requestAnimationFrame(updateParallax);
+        window.requestAnimationFrame(updateScrollEffects);
         ticking = true;
       }
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    updateParallax();
-
-    // Intersection Observer for Chronology & Events Timeline Reveal
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-          } else {
-            entry.target.classList.remove('revealed');
-          }
-        });
-      },
-      { threshold: 0.16, rootMargin: '0px 0px -50px 0px' }
-    );
-
-    storyRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    eventRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
+    window.addEventListener('resize', onScroll, { passive: true });
+    updateScrollEffects();
 
     return () => {
       window.removeEventListener('scroll', onScroll);
-      observer.disconnect();
+      window.removeEventListener('resize', onScroll);
     };
   }, []);
 
@@ -388,8 +409,10 @@ export default function AboutSection() {
           </p>
         </div>
 
-        <div className="ab-story-timeline">
-          <div className="ab-story-line" />
+        <div className="ab-story-timeline" ref={storyTimelineRef}>
+          <div className="ab-story-line">
+            <div className="ab-story-line-fill" ref={storyLineFillRef} />
+          </div>
           {STORY_TIMELINE.map((item, idx) => (
             <div
               key={idx}
@@ -430,8 +453,10 @@ export default function AboutSection() {
           </p>
         </div>
 
-        <div className="ab-events-timeline-wrap">
-          <div className="ab-events-spine" />
+        <div className="ab-events-timeline-wrap" ref={eventsTimelineRef}>
+          <div className="ab-events-spine">
+            <div className="ab-events-spine-fill" ref={eventsSpineFillRef} />
+          </div>
 
           {RECENT_EVENTS.map((event, index) => {
             const isReversed = index % 2 !== 0;
