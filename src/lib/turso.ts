@@ -1,11 +1,22 @@
 import { createClient } from '@libsql/client/web';
 
-const DEFAULT_URL = 'libsql://dsc-dscsrmrmp.aws-ap-south-1.turso.io';
+const DEFAULT_URL = 'https://dsc-dscsrmrmp.aws-ap-south-1.turso.io';
 const DEFAULT_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODk0MDcxNTEsImlkIjoiMDFhMGEwZjktYjYwMS03ZGJlLTkzMTQtZmNkMDVhNDVlNDhhIiwia2lkIjoiWFpUMjFKc1dfaVNic1pLYnJXMUZJbFZMS3FIdEQxVGpiUnctbWJtZTNjVSIsInJpZCI6IjkwMjliZjdlLTZiYTMtNDc2ZC1hMGY4LWZhNTFlNjk5Y2E0NSJ9.MJNEDy8E20dSCd1FeFKjRDHeSxVfI45Qe8Od9NTlYopqBU_jNgROhYUtNDynUX_OQG5UNszjm4cqheC2hmKtBQ';
 
 const env = (typeof import.meta !== 'undefined' && (import.meta as any).env) || {};
-const url = env.TURSO_DATABASE_URL || (typeof process !== 'undefined' && process.env?.TURSO_DATABASE_URL) || DEFAULT_URL;
-const authToken = env.TURSO_AUTH_TOKEN || (typeof process !== 'undefined' && process.env?.TURSO_AUTH_TOKEN) || DEFAULT_TOKEN;
+const rawUrl =
+  env.PUBLIC_TURSO_DATABASE_URL ||
+  env.TURSO_DATABASE_URL ||
+  (typeof process !== 'undefined' && (process.env?.PUBLIC_TURSO_DATABASE_URL || process.env?.TURSO_DATABASE_URL)) ||
+  DEFAULT_URL;
+
+// Ensure HTTPS scheme for browser fetch compatibility with Turso HTTP pipeline
+export const url = rawUrl.startsWith('libsql://') ? rawUrl.replace('libsql://', 'https://') : rawUrl;
+export const authToken =
+  env.PUBLIC_TURSO_AUTH_TOKEN ||
+  env.TURSO_AUTH_TOKEN ||
+  (typeof process !== 'undefined' && (process.env?.PUBLIC_TURSO_AUTH_TOKEN || process.env?.TURSO_AUTH_TOKEN)) ||
+  DEFAULT_TOKEN;
 
 export const turso = createClient({
   url,
