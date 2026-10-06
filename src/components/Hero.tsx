@@ -757,7 +757,7 @@ export default function Hero() {
           intro="rise"
           fit={isMobile ? 'portrait' : 'natural'}
           cardHeight={isMobile ? 0.36 : 0.50}
-          tilt={isMobile ? 42 : 54}
+          tilt={isMobile ? 0 : 54}
           lensWidth={isMobile ? 0.88 : 0.76}
           lensHeight={isMobile ? 1.25 : 1.15}
           bend={isMobile ? 0.40 : 0.34}
