@@ -133,7 +133,16 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
       const handleMouseMove = (e: MouseEvent) => {
         // Stabilize card tilt when hovering over social buttons to avoid canceling clicks
-        if ((e.target as HTMLElement)?.closest('.team-social-overlay-row')) {
+        const target = e.target as HTMLElement | null;
+        if (target?.closest('.team-card-social-row, .team-card-social-btn, a, button')) {
+          gsap.to(card, {
+            rotateX: 0,
+            rotateY: 0,
+            scale: 1.02,
+            duration: 0.2,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
           return;
         }
 
@@ -289,119 +298,141 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
     return undefined;
   };
 
+  const handleSocialClick = (e: React.MouseEvent, url?: string) => {
+    e.stopPropagation();
+    if (!url) return;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   // Uniform card renderer used across ALL sections
-  const renderCard = (m: Member, key: string | number) => (
-    <div key={key} className="team-card-wrapper">
-      {/* Dynamic domain glow spotlight behind card */}
-      <div className={`card-hover-glow-spotlight spotlight-${m.domain}`} />
+  const renderCard = (m: Member, key: string | number) => {
+    const ghUrl = normalizeUrl(m.github, 'github');
+    const liUrl = normalizeUrl(m.linkedin, 'linkedin');
+    const inUrl = normalizeUrl(m.insta, 'insta');
+    const xUrl = normalizeUrl(m.x, 'x');
+    const emUrl = normalizeUrl(m.email, 'email');
+    const hasSocials = Boolean(ghUrl || liUrl || inUrl || xUrl || emUrl);
 
-      {/* Card Body */}
-      <div className="team-member-card">
-        {/* Image Container */}
-        <div className="team-image-container">
-          {m.image ? (
-            <img
-              src={m.image}
-              alt={m.name}
-              className="team-member-image"
-              style={getImageStyle(m)}
-              loading="lazy"
-            />
-          ) : (
-            <div className="team-member-placeholder-avatar">
-              <span>{m.name.split(' ').map((n) => n[0]).filter(Boolean).slice(0, 2).join('')}</span>
+    return (
+      <div key={key} className="team-card-wrapper">
+        {/* Dynamic domain glow spotlight behind card */}
+        <div className={`card-hover-glow-spotlight spotlight-${m.domain}`} />
+
+        {/* Card Body */}
+        <div className="team-member-card">
+          {/* Image Container */}
+          <div className="team-image-container">
+            {m.image ? (
+              <img
+                src={m.image}
+                alt={m.name}
+                className="team-member-image"
+                style={getImageStyle(m)}
+                loading="lazy"
+              />
+            ) : (
+              <div className="team-member-placeholder-avatar">
+                <span>{m.name.split(' ').map((n) => n[0]).filter(Boolean).slice(0, 2).join('')}</span>
+              </div>
+            )}
+            <div className="team-image-overlay" />
+          </div>
+
+          {/* Info Section */}
+          <div className="team-member-info">
+            <div className="team-member-meta">
+              <h3>{m.name}</h3>
+              <p className="team-member-role">{m.role}</p>
             </div>
-          )}
-          <div className="team-image-overlay" />
 
-          {/* Overlay Social Icons Row */}
-          {(m.github || m.linkedin || m.insta || m.x || m.email) && (
-            <div className="team-social-overlay-row">
-              {m.github && (
-                <a
-                  href={normalizeUrl(m.github, 'github')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="team-social-circle-btn"
-                  aria-label={`${m.name} GitHub`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-                  </svg>
-                </a>
-              )}
-              {m.linkedin && (
-                <a
-                  href={normalizeUrl(m.linkedin, 'linkedin')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="team-social-circle-btn"
-                  aria-label={`${m.name} LinkedIn`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                    <rect x="2" y="9" width="4" height="12" />
-                    <circle cx="4" cy="4" r="2" />
-                  </svg>
-                </a>
-              )}
-              {m.insta && (
-                <a
-                  href={normalizeUrl(m.insta, 'insta')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="team-social-circle-btn"
-                  aria-label={`${m.name} Instagram`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                  </svg>
-                </a>
-              )}
-              {m.x && (
-                <a
-                  href={normalizeUrl(m.x, 'x')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="team-social-circle-btn"
-                  aria-label={`${m.name} X`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                </a>
-              )}
-              {m.email && (
-                <a
-                  href={normalizeUrl(m.email, 'email')}
-                  className="team-social-circle-btn"
-                  aria-label={`${m.name} Email`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                  </svg>
-                </a>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Info Section */}
-        <div className="team-member-info">
-          <h3>{m.name}</h3>
-          <p className="team-member-role">{m.role}</p>
+            {/* Social Links Row — outside overflow:hidden, crystal clear & 100% clickable */}
+            {hasSocials && (
+              <div className="team-card-social-row">
+                {ghUrl && (
+                  <a
+                    href={ghUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="team-card-social-btn team-social-github"
+                    aria-label={`${m.name} GitHub`}
+                    title={`${m.name} GitHub`}
+                    onClick={(e) => handleSocialClick(e, ghUrl)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                    </svg>
+                  </a>
+                )}
+                {liUrl && (
+                  <a
+                    href={liUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="team-card-social-btn team-social-linkedin"
+                    aria-label={`${m.name} LinkedIn`}
+                    title={`${m.name} LinkedIn`}
+                    onClick={(e) => handleSocialClick(e, liUrl)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                      <rect x="2" y="9" width="4" height="12" />
+                      <circle cx="4" cy="4" r="2" />
+                    </svg>
+                  </a>
+                )}
+                {inUrl && (
+                  <a
+                    href={inUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="team-card-social-btn team-social-insta"
+                    aria-label={`${m.name} Instagram`}
+                    title={`${m.name} Instagram`}
+                    onClick={(e) => handleSocialClick(e, inUrl)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                    </svg>
+                  </a>
+                )}
+                {xUrl && (
+                  <a
+                    href={xUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="team-card-social-btn team-social-x"
+                    aria-label={`${m.name} X`}
+                    title={`${m.name} X`}
+                    onClick={(e) => handleSocialClick(e, xUrl)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
+                )}
+                {emUrl && (
+                  <a
+                    href={emUrl}
+                    className="team-card-social-btn team-social-email"
+                    aria-label={`${m.name} Email`}
+                    title={`${m.name} Email`}
+                    onClick={(e) => handleSocialClick(e, emUrl)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderDomainIcon = (key: string, isActive: boolean) => {
     switch (key) {
@@ -1455,6 +1486,79 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+
+        .team-member-meta {
+          flex: 1;
+        }
+
+        .team-card-social-row {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          margin-top: 8px;
+          padding-top: 8px;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          position: relative;
+          z-index: 50;
+          pointer-events: auto !important;
+          transform: translateZ(16px);
+        }
+
+        .team-card-social-btn {
+          width: 30px;
+          height: 30px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: #94a3b8;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          cursor: pointer !important;
+          pointer-events: auto !important;
+          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative;
+          z-index: 60;
+        }
+
+        .team-card-social-btn:hover {
+          transform: translateY(-2px) scale(1.08);
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .team-card-social-btn.team-social-github:hover {
+          color: #ffffff;
+          border-color: rgba(255, 255, 255, 0.5);
+          box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .team-card-social-btn.team-social-linkedin:hover {
+          color: #0077b5;
+          border-color: #0077b5;
+          background: rgba(0, 119, 181, 0.18);
+          box-shadow: 0 4px 12px rgba(0, 119, 181, 0.35);
+        }
+
+        .team-card-social-btn.team-social-insta:hover {
+          color: #e1306c;
+          border-color: #e1306c;
+          background: rgba(225, 48, 108, 0.18);
+          box-shadow: 0 4px 12px rgba(225, 48, 108, 0.35);
+        }
+
+        .team-card-social-btn.team-social-x:hover {
+          color: #ffffff;
+          border-color: rgba(255, 255, 255, 0.45);
+          box-shadow: 0 4px 12px rgba(255, 255, 255, 0.18);
+        }
+
+        .team-card-social-btn.team-social-email:hover {
+          color: #1dd1a1;
+          border-color: #1dd1a1;
+          background: rgba(29, 209, 161, 0.18);
+          box-shadow: 0 4px 12px rgba(29, 209, 161, 0.35);
         }
       `}</style>
     </div>
