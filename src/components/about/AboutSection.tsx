@@ -20,6 +20,7 @@ interface EventData {
   title: string;
   date: string;
   tag: string;
+  isUpcoming?: boolean;
   description: string;
   badges: string[];
   image: string;
@@ -44,20 +45,32 @@ const RECENT_EVENTS: EventData[] = [
     date: '28 February 2026',
     tag: 'INNOVATION',
     description:
-      'A three-hour innovation challenge where teams tackled randomly assigned problem statements and pitched their solutions.',
-    badges: ['27 Teams', 'Live Pitching'],
+      'A three-hour innovation challenge where teams tackled randomly assigned problem statements and pitched their solutions under time constraints.',
+    badges: ['27 Teams', 'Live Pitching', 'Rapid Ideation'],
     image: '/about/ideatech.jpg'
   },
   {
     id: 3,
     num: '03',
-    title: 'Technorally',
-    date: 'September 2025',
+    title: 'Technorally 2.0',
+    date: '30 September 2026',
     tag: 'TECHNICAL COMPETITION',
     description:
-      'A four-round relay-style technical competition combining image identification, UI/UX design, SQL challenges, and debugging.',
-    badges: ['4 Rounds', 'Multi-Domain'],
+      'A four-round relay-style technical tournament combining UI/UX design, SQL challenges, competitive debugging, and algorithmic problem-solving.',
+    badges: ['4 Relay Stages', 'Multi-Domain', 'Competitive Debugging'],
     image: '/about/technorally.jpg'
+  },
+  {
+    id: 4,
+    num: '04',
+    title: "DevSummit'26",
+    date: '15 October 2026',
+    tag: 'UPCOMING EVENT',
+    isUpcoming: true,
+    description:
+      'Our flagship annual developer summit bringing industry leaders, student innovators, and creators together for keynotes, live tech demonstrations, and community laurels.',
+    badges: ['Upcoming', 'Flagship Summit', 'Keynotes & Demos'],
+    image: '/gallery/awards.png'
   }
 ];
 
@@ -116,7 +129,7 @@ const STORY_TIMELINE = [
     year: '2026',
     title: 'A Major Milestone',
     description:
-      'Hackcelerate 2026 marked a major milestone with 4000+ registrations, 30 shortlisted teams, and a ₹1,00,000+ prize pool.',
+      "Hackcelerate 2026, IdeaTech, Technorally 2.0, and DevSummit'26 marked a major milestone of high-impact hackathons, innovation challenges, and flagship developer summits.",
     badge: '₹1L+ Prize Pool'
   }
 ];
@@ -227,6 +240,7 @@ const BEYOND_TECHNICAL = [
 export default function AboutSection() {
   const imageInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const storyRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const eventRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     let ticking = false;
@@ -260,7 +274,7 @@ export default function AboutSection() {
     window.addEventListener('scroll', onScroll, { passive: true });
     updateParallax();
 
-    // Intersection Observer for Chronology Reveal
+    // Intersection Observer for Chronology & Events Timeline Reveal
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -271,10 +285,14 @@ export default function AboutSection() {
           }
         });
       },
-      { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.16, rootMargin: '0px 0px -50px 0px' }
     );
 
     storyRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    eventRefs.current.forEach((el) => {
       if (el) observer.observe(el);
     });
 
@@ -419,13 +437,25 @@ export default function AboutSection() {
             const isReversed = index % 2 !== 0;
 
             return (
-              <div key={event.id} className="ab-event-timeline-row">
-                <div className="ab-event-left-marker">
+              <div
+                key={event.id}
+                className={`ab-event-timeline-row ${event.isUpcoming ? 'ab-event-row-upcoming' : ''}`}
+                ref={(el) => {
+                  eventRefs.current[index] = el;
+                }}
+              >
+                <div
+                  className={`ab-event-left-marker ${
+                    event.isUpcoming ? 'ab-marker-upcoming' : ''
+                  }`}
+                >
                   <span>{event.num}</span>
                 </div>
 
                 <div
-                  className={`ab-card ab-event-card ${isReversed ? 'ab-event-card-rev' : ''}`}
+                  className={`ab-card ab-event-card ${isReversed ? 'ab-event-card-rev' : ''} ${
+                    event.isUpcoming ? 'ab-event-card-upcoming' : ''
+                  }`}
                 >
                   <div className="ab-card-glow-ring" aria-hidden="true" />
 
@@ -443,7 +473,13 @@ export default function AboutSection() {
 
                   <div className="ab-event-details">
                     <div className="ab-event-meta">
-                      <span className="ab-tag">{event.tag}</span>
+                      <span
+                        className={`ab-tag ${
+                          event.isUpcoming ? 'ab-tag-upcoming' : ''
+                        }`}
+                      >
+                        {event.tag}
+                      </span>
                       <span className="ab-date">{event.date}</span>
                     </div>
 

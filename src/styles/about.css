@@ -469,15 +469,41 @@
   height: 36px;
   border-radius: 50%;
   background: #0d1310;
-  border: 2px solid #1dd1a1;
+  border: 2px solid rgba(29, 209, 161, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #1dd1a1;
+  color: rgba(29, 209, 161, 0.6);
   z-index: 3;
-  box-shadow: 0 0 18px rgba(29, 209, 161, 0.45);
+  opacity: 0.35;
+  transform: scale(0.85);
+  box-shadow: 0 0 0px rgba(29, 209, 161, 0);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.7s ease,
+              color 0.7s ease,
+              box-shadow 0.7s ease;
+}
+
+.ab-event-timeline-row.revealed .ab-event-left-marker {
+  opacity: 1;
+  transform: scale(1);
+  border-color: #1dd1a1;
+  color: #1dd1a1;
+  box-shadow: 0 0 20px rgba(29, 209, 161, 0.5);
+}
+
+.ab-marker-upcoming {
+  border-color: rgba(0, 242, 254, 0.45);
+  color: rgba(0, 242, 254, 0.7);
+}
+
+.ab-event-timeline-row.revealed .ab-marker-upcoming {
+  border-color: #00f2fe;
+  color: #00f2fe;
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.65);
 }
 
 .ab-event-card {
@@ -486,6 +512,67 @@
   grid-template-columns: 0.95fr 1.05fr;
   gap: 28px;
   padding: 24px;
+  /* Scroll Reveal Init state */
+  opacity: 0;
+  transform: translateY(35px) scale(0.98);
+  will-change: opacity, transform;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease,
+              box-shadow 0.4s ease;
+}
+
+.ab-event-timeline-row.revealed .ab-event-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.ab-event-card-upcoming {
+  border-color: rgba(0, 242, 254, 0.25);
+  background: linear-gradient(135deg, rgba(8, 18, 22, 0.95) 0%, rgba(6, 12, 16, 0.98) 100%);
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.06);
+}
+
+.ab-event-card-upcoming:hover {
+  border-color: rgba(0, 242, 254, 0.45);
+  box-shadow: 0 16px 42px rgba(0, 242, 254, 0.15);
+}
+
+.ab-tag-upcoming {
+  color: #00f2fe !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ab-tag-upcoming::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00f2fe;
+  box-shadow: 0 0 10px #00f2fe;
+  animation: abUpcomingPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes abUpcomingPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 12px #00f2fe;
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.75);
+    box-shadow: 0 0 4px #00f2fe;
+  }
+}
+
+.ab-event-card-upcoming .ab-event-badge {
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.08);
+  border-color: rgba(0, 242, 254, 0.28);
 }
 
 .ab-event-card-rev {
