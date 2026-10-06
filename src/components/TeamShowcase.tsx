@@ -65,21 +65,31 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
     async function fetchLiveMembers() {
       try {
         let fetched: Member[] = [];
-        // Attempt /api/team route first
-        try {
-          const res = await fetch('/api/team');
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data?.members) && data.members.length > 0) {
-              fetched = data.members;
-            }
-          }
-        } catch {}
 
-        // Fallback to direct client-side Turso query if API route is unavailable
-        if (!fetched.length) {
+        // 1. Prioritize direct live query to Turso DB HTTP pipeline
+        try {
           const { getTeamMembers } = await import('../lib/turso');
-          fetched = await getTeamMembers();
+          const live = await getTeamMembers();
+          if (Array.isArray(live) && live.length > 0) {
+            fetched = live;
+          }
+        } catch (directErr) {
+          console.warn('Direct Turso database fetch error, falling back to /api/team:', directErr);
+        }
+
+        // 2. Fallback to /api/team with cache-busting if direct client query was empty
+        if (!fetched.length) {
+          try {
+            const res = await fetch(`/api/team?t=${Date.now()}`, { cache: 'no-store' });
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data?.members) && data.members.length > 0) {
+                fetched = data.members;
+              }
+            }
+          } catch (apiErr) {
+            console.error('API /api/team fetch error:', apiErr);
+          }
         }
 
         if (isMounted && fetched.length > 0) {
@@ -92,8 +102,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
     fetchLiveMembers();
 
+    // Auto-refresh from database every 30 seconds to catch live updates
+    const syncTimer = setInterval(fetchLiveMembers, 30000);
+
     return () => {
       isMounted = false;
+      clearInterval(syncTimer);
     };
   }, []);
 
