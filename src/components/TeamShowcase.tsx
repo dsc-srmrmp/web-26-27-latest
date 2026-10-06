@@ -58,6 +58,13 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'graph'>('grid');
 
+  // Keep state in sync if initialMembers prop changes
+  useEffect(() => {
+    if (initialMembers && initialMembers.length > 0) {
+      setMembers(initialMembers);
+    }
+  }, [initialMembers]);
+
   // Actively fetch live members from Turso DB / API route
   useEffect(() => {
     let isMounted = true;
@@ -66,29 +73,29 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
       try {
         let fetched: Member[] = [];
 
-        // 1. Prioritize direct live query to Turso DB HTTP pipeline
+        // 1. Primary: fetch from same-origin /api/team with cache-busting
         try {
-          const { getTeamMembers } = await import('../lib/turso');
-          const live = await getTeamMembers();
-          if (Array.isArray(live) && live.length > 0) {
-            fetched = live;
+          const res = await fetch(`/api/team?t=${Date.now()}`, { cache: 'no-store' });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data?.members) && data.members.length > 0) {
+              fetched = data.members;
+            }
           }
-        } catch (directErr) {
-          console.warn('Direct Turso database fetch error, falling back to /api/team:', directErr);
+        } catch (apiErr) {
+          console.warn('/api/team fetch error:', apiErr);
         }
 
-        // 2. Fallback to /api/team with cache-busting if direct client query was empty
+        // 2. Direct Turso query fallback if API endpoint was empty
         if (!fetched.length) {
           try {
-            const res = await fetch(`/api/team?t=${Date.now()}`, { cache: 'no-store' });
-            if (res.ok) {
-              const data = await res.json();
-              if (Array.isArray(data?.members) && data.members.length > 0) {
-                fetched = data.members;
-              }
+            const { getTeamMembers } = await import('../lib/turso');
+            const live = await getTeamMembers();
+            if (Array.isArray(live) && live.length > 0) {
+              fetched = live;
             }
-          } catch (apiErr) {
-            console.error('API /api/team fetch error:', apiErr);
+          } catch (directErr) {
+            console.error('Direct Turso database fetch error:', directErr);
           }
         }
 
@@ -102,8 +109,8 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
     fetchLiveMembers();
 
-    // Auto-refresh from database every 30 seconds to catch live updates
-    const syncTimer = setInterval(fetchLiveMembers, 30000);
+    // Auto-refresh from database every 10 seconds to catch live updates
+    const syncTimer = setInterval(fetchLiveMembers, 10000);
 
     return () => {
       isMounted = false;
@@ -134,12 +141,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
       const handleMouseMove = (e: MouseEvent) => {
         // Stabilize card tilt when hovering over social buttons to avoid canceling clicks
         const target = e.target as HTMLElement | null;
-        if (target?.closest('.team-card-social-row, .team-card-social-btn, a, button')) {
+        if (target?.closest('.team-social-overlay-row, .team-social-circle-btn, a, button')) {
           gsap.to(card, {
             rotateX: 0,
             rotateY: 0,
-            scale: 1.02,
-            duration: 0.2,
+            scale: 1.025,
+            duration: 0.15,
             ease: 'power2.out',
             overwrite: 'auto',
           });
@@ -336,29 +343,24 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
               </div>
             )}
             <div className="team-image-overlay" />
-          </div>
 
-          {/* Info Section */}
-          <div className="team-member-info">
-            <div className="team-member-meta">
-              <h3>{m.name}</h3>
-              <p className="team-member-role">{m.role}</p>
-            </div>
-
-            {/* Social Links Row — outside overflow:hidden, crystal clear & 100% clickable */}
+            {/* Overlay Social Icons Row (Shows ONLY on hover at bottom of image, exactly like the old version) */}
             {hasSocials && (
-              <div className="team-card-social-row">
+              <div className="team-social-overlay-row">
                 {ghUrl && (
                   <a
                     href={ghUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="team-card-social-btn team-social-github"
+                    className="team-social-circle-btn"
                     aria-label={`${m.name} GitHub`}
                     title={`${m.name} GitHub`}
-                    onClick={(e) => handleSocialClick(e, ghUrl)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(ghUrl, '_blank', 'noopener,noreferrer');
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
                     </svg>
                   </a>
@@ -368,12 +370,15 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     href={liUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="team-card-social-btn team-social-linkedin"
+                    className="team-social-circle-btn"
                     aria-label={`${m.name} LinkedIn`}
                     title={`${m.name} LinkedIn`}
-                    onClick={(e) => handleSocialClick(e, liUrl)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(liUrl, '_blank', 'noopener,noreferrer');
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                       <rect x="2" y="9" width="4" height="12" />
                       <circle cx="4" cy="4" r="2" />
@@ -385,12 +390,15 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     href={inUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="team-card-social-btn team-social-insta"
+                    className="team-social-circle-btn"
                     aria-label={`${m.name} Instagram`}
                     title={`${m.name} Instagram`}
-                    onClick={(e) => handleSocialClick(e, inUrl)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(inUrl, '_blank', 'noopener,noreferrer');
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -402,12 +410,15 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                     href={xUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="team-card-social-btn team-social-x"
+                    className="team-social-circle-btn"
                     aria-label={`${m.name} X`}
                     title={`${m.name} X`}
-                    onClick={(e) => handleSocialClick(e, xUrl)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(xUrl, '_blank', 'noopener,noreferrer');
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
                   </a>
@@ -415,12 +426,15 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                 {emUrl && (
                   <a
                     href={emUrl}
-                    className="team-card-social-btn team-social-email"
+                    className="team-social-circle-btn"
                     aria-label={`${m.name} Email`}
                     title={`${m.name} Email`}
-                    onClick={(e) => handleSocialClick(e, emUrl)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(emUrl, '_blank', 'noopener,noreferrer');
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
@@ -428,6 +442,12 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
                 )}
               </div>
             )}
+          </div>
+
+          {/* Info Section - Clean, compact old style */}
+          <div className="team-member-info">
+            <h3>{m.name}</h3>
+            <p className="team-member-role">{m.role}</p>
           </div>
         </div>
       </div>
@@ -1388,60 +1408,50 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
 
         .team-social-overlay-row {
           position: absolute;
-          bottom: 14px;
+          bottom: 16px;
           left: 50%;
-          transform: translateX(-50%) translateY(12px) translateZ(40px);
+          transform: translateX(-50%) translateY(14px);
           opacity: 0;
           pointer-events: none;
           display: flex;
-          gap: 8px;
+          gap: 10px;
           z-index: 50;
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .team-card-wrapper:hover .team-social-overlay-row,
         .team-member-card:hover .team-social-overlay-row {
           opacity: 1;
-          transform: translateX(-50%) translateY(0) translateZ(40px);
+          transform: translateX(-50%) translateY(0);
           pointer-events: auto;
-        }
-
-        /* On mobile & touch devices, keep social buttons visible & clickable without requiring hover */
-        @media (hover: none), (max-width: 768px) {
-          .team-social-overlay-row {
-            opacity: 1 !important;
-            transform: translateX(-50%) translateY(0) translateZ(40px) !important;
-            pointer-events: auto !important;
-          }
         }
 
         .team-social-circle-btn {
           width: 34px;
           height: 34px;
           border-radius: 50%;
-          background: rgba(11, 17, 15, 0.92);
+          background: rgba(11, 17, 15, 0.85);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.22);
-          display: flex;
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          display: inline-flex;
           align-items: center;
           justify-content: center;
           color: #e8ede9;
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          cursor: pointer;
-          position: relative;
-          z-index: 60;
+          cursor: pointer !important;
           pointer-events: auto !important;
           text-decoration: none;
-          transform: translateZ(10px);
+          position: relative;
+          z-index: 60;
         }
 
         .team-social-circle-btn:hover {
           border-color: #1dd1a1;
           color: #1dd1a1;
           background-color: rgba(29, 209, 161, 0.25);
-          transform: translateY(-2px) scale(1.15) translateZ(15px);
-          box-shadow: 0 4px 14px rgba(29, 209, 161, 0.3);
+          transform: translateY(-2px) scale(1.12);
+          box-shadow: 0 4px 12px rgba(29, 209, 161, 0.25);
         }
 
         .team-member-info {
@@ -1486,79 +1496,6 @@ export default function TeamShowcase({ initialMembers }: TeamShowcaseProps) {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-        }
-
-        .team-member-meta {
-          flex: 1;
-        }
-
-        .team-card-social-row {
-          display: flex;
-          align-items: center;
-          gap: 7px;
-          margin-top: 8px;
-          padding-top: 8px;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-          position: relative;
-          z-index: 50;
-          pointer-events: auto !important;
-          transform: translateZ(16px);
-        }
-
-        .team-card-social-btn {
-          width: 30px;
-          height: 30px;
-          border-radius: 8px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          color: #94a3b8;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          text-decoration: none;
-          cursor: pointer !important;
-          pointer-events: auto !important;
-          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-          position: relative;
-          z-index: 60;
-        }
-
-        .team-card-social-btn:hover {
-          transform: translateY(-2px) scale(1.08);
-          background: rgba(255, 255, 255, 0.12);
-        }
-
-        .team-card-social-btn.team-social-github:hover {
-          color: #ffffff;
-          border-color: rgba(255, 255, 255, 0.5);
-          box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-        }
-
-        .team-card-social-btn.team-social-linkedin:hover {
-          color: #0077b5;
-          border-color: #0077b5;
-          background: rgba(0, 119, 181, 0.18);
-          box-shadow: 0 4px 12px rgba(0, 119, 181, 0.35);
-        }
-
-        .team-card-social-btn.team-social-insta:hover {
-          color: #e1306c;
-          border-color: #e1306c;
-          background: rgba(225, 48, 108, 0.18);
-          box-shadow: 0 4px 12px rgba(225, 48, 108, 0.35);
-        }
-
-        .team-card-social-btn.team-social-x:hover {
-          color: #ffffff;
-          border-color: rgba(255, 255, 255, 0.45);
-          box-shadow: 0 4px 12px rgba(255, 255, 255, 0.18);
-        }
-
-        .team-card-social-btn.team-social-email:hover {
-          color: #1dd1a1;
-          border-color: #1dd1a1;
-          background: rgba(29, 209, 161, 0.18);
-          box-shadow: 0 4px 12px rgba(29, 209, 161, 0.35);
         }
       `}</style>
     </div>
