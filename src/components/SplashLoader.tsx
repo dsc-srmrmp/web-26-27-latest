@@ -33,16 +33,19 @@ export default function SplashLoader() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const indexRef = useRef(0);
 
-  // Skip if already seen this session
+  // Always display intro loader on load
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const seen = sessionStorage.getItem("dsc-splash-seen");
-      if (seen === "1") {
-        setVisible(false);
-        return;
-      }
+      try {
+        sessionStorage.removeItem("dsc-splash-seen");
+      } catch {}
       document.body.classList.add("splash-active");
     }
+    return () => {
+      if (typeof window !== "undefined") {
+        document.body.classList.remove("splash-active");
+      }
+    };
   }, []);
 
   // Cycle through greetings — avoid calling setState from within setState
@@ -75,7 +78,6 @@ export default function SplashLoader() {
     if (!fading) return;
     setVisible(false);
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("dsc-splash-seen", "1");
       document.body.classList.remove("splash-active");
     }
   }
