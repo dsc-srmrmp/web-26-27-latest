@@ -1405,12 +1405,12 @@ button {
 @media (max-width: 768px) {
   .partnership-section {
     height: auto;
-    min-height: 440px;
-    margin-top: 0;
-    padding: 60px 16px 70px;
-    background-position: center bottom;
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
+    min-height: 480px;
+    margin-top: -40px;
+    padding: 70px 16px 70px;
+    background-position: center 36%;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40px, black 85%, transparent 100%) !important;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 40px, black 85%, transparent 100%) !important;
   }
 
   .partnership-heading {
@@ -1812,13 +1812,18 @@ button {
     aspect-ratio: auto;
     min-height: auto;
     height: auto;
-    margin-top: 0;
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
-    background-image: none !important;
-    background-color: #0c0f14;
-    padding: 60px 16px;
+    margin-top: -30px;
+    background-image: url('/creative-ai/bg.png') !important;
+    background-size: cover !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+    background-color: #1a1a18;
+    padding: 60px 16px 50px;
     display: block;
+    position: relative;
+    z-index: 2;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 60px, black calc(100% - 60px), transparent 100%) !important;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 60px, black calc(100% - 60px), transparent 100%) !important;
   }
 
   .ca-grid {
