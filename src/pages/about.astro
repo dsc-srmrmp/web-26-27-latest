@@ -81,7 +81,7 @@ import '../styles/about.css';
         Wrapper establishes stacking context (z-index 10, isolation).
         Artworks sit at z-index 1, cards content at z-index 2.
       -->
-      <section class="ab-container">
+      <section class="about-content-section">
         <!-- Decorative artwork 1: upper-left negative space -->
         <img
           src="/about/new_dsc_image-removebg-preview-removebg-preview.png"
@@ -99,7 +99,7 @@ import '../styles/about.css';
         />
 
         <!-- Cards content at z-index: 2 — always above artworks -->
-        <div class="about-cards-content" style="position: relative; z-index: 2; pointer-events: auto;">
+        <div class="about-cards-content" style="position: relative; z-index: 2; pointer-events: auto; width: 100%;">
           <AboutSection client:load />
         </div>
 

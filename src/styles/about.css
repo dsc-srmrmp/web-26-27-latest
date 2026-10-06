@@ -3,15 +3,24 @@
 /* ==========================================
    CONTAINER & BACKGROUND WATERMARK
    ========================================== */
+.about-content-section {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .ab-container {
   position: relative;
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 40px 24px 0px;
   color: #f1f2f6;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   overflow: visible;
   isolation: isolate;
+  box-sizing: border-box;
 }
 
 .ab-watermark {
@@ -1024,23 +1033,31 @@
 
 /* RESPONSIVE LOWER SECTIONS */
 @media (max-width: 1024px) {
-  .ab-aim-grid, .ab-beyond-grid {
+  .ab-aim-grid, .ab-beyond-grid, .ab-identity-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
   }
 }
 
 @media (max-width: 768px) {
-  .ab-atmospheric-divider {
-    height: 80px;
+  .ab-deco-art {
+    display: none !important;
   }
-  .ab-aim-grid, .ab-beyond-grid {
+  .ab-atmospheric-divider {
+    height: 60px;
+  }
+  .ab-aim-grid, .ab-beyond-grid, .ab-identity-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   .ab-aim-card {
-    padding: 28px 24px;
+    padding: 24px 20px;
   }
   .ab-beyond-card {
-    padding: 32px 28px;
+    padding: 26px 22px;
+  }
+  .ab-identity-card {
+    padding: 24px 20px;
   }
 }
 
@@ -1048,23 +1065,56 @@
    RESPONSIVE
    ========================================== */
 @media (max-width: 960px) {
+  .about-container {
+    padding: 0 16px;
+    width: 100%;
+    max-width: 100vw;
+  }
+  .about-layout-wrapper {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .ab-container {
+    padding: 16px 0 0px;
+    width: 100%;
+    max-width: 100%;
+  }
   .ab-hero-card {
-    flex-direction: column-reverse;
-    padding: 32px 24px;
+    flex-direction: column;
+    padding: 0;
     align-items: stretch;
+    margin-top: 24px;
+    min-height: auto;
+    overflow: hidden;
+  }
+  .ab-hero-image-wrap {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    height: 220px;
+    border-radius: 20px 20px 0 0;
+    mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
   }
   .ab-hero-content {
     max-width: 100%;
-    margin-top: 240px; /* Leave space for absolute image above */
+    margin-top: 0;
+    padding: 24px 20px 32px;
   }
-  .ab-hero-image-wrap {
-    width: 100%;
-    height: 240px;
-    border-radius: 20px 20px 0 0;
-    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  .ab-hero-title {
+    font-size: 1.85rem;
+    margin-bottom: 20px;
   }
-  .ab-grid-mission-stats { grid-template-columns: 1fr; }
+  .ab-grid-mission-stats {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .ab-mission-card {
+    padding: 28px 20px;
+  }
   .ab-story-timeline { gap: 36px; }
   .ab-story-timeline .ab-story-line,
   .ab-story-timeline .ab-story-dot { display: none; }
@@ -1079,9 +1129,51 @@
     transform: translateY(0) scale(1);
     filter: blur(0);
   }
-  .ab-events-timeline-wrap { padding-left: 0; gap: 32px; }
+  .ab-events-timeline-wrap {
+    padding-left: 0;
+    gap: 28px;
+    width: 100%;
+  }
   .ab-events-spine,
   .ab-event-left-marker { display: none; }
   .ab-event-card,
-  .ab-event-card-rev { grid-template-columns: 1fr; }
+  .ab-event-card-rev {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 18px;
+    width: 100%;
+  }
+  .ab-event-card-rev .ab-event-image-frame {
+    order: unset;
+  }
+  .ab-event-card-rev .ab-event-details {
+    order: unset;
+  }
+  .ab-event-image-frame {
+    height: 200px;
+    width: 100%;
+  }
+  .ab-vision-featured-block {
+    padding: 36px 20px;
+  }
+  .ab-vision-headline {
+    font-size: 1.4rem;
+  }
 }
+
+@media (max-width: 480px) {
+  .about-container {
+    padding: 0 12px;
+  }
+  .ab-hero-content {
+    padding: 20px 16px 24px;
+  }
+  .ab-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .ab-stat-card {
+    padding: 20px 16px;
+  }
+}
+
