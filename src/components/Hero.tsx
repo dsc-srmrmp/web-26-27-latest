@@ -825,7 +825,12 @@ export default function Hero() {
               <a href="/domains" className="hero-pill-btn">
                 <span className="hero-pill-btn-inner">Explore Domains</span>
               </a>
-              <a href="/gallery" className="hero-pill-btn">
+              <a
+                href="https://forms.gle/S8CS7XpG6zUtf8hW9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hero-pill-btn"
+              >
                 <span className="hero-pill-btn-inner">DevSummit&apos;26</span>
               </a>
             </div>
